@@ -1,0 +1,7 @@
+sudo gem install rubyXL
+
+bundler install
+
+para que funque el excel hay que poner el archivo files2.xlsx en la carpeta 
+/opt/bitnami/apps/redmine/htdocs/public/plugin_assets/Excels/
+

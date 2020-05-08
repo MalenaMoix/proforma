@@ -1,0 +1,481 @@
+<%
+   now = DateTime.now
+   month_to_show = params[:month] ? DateTime.parse(params[:month]) : DateTime.new(now.year, now.month, 1)
+%>
+<% this_month_days = Date.new(month_to_show.year, month_to_show.month, -1).day %>
+<% time_entry_activity = TimeEntryActivity.where(name: 'Timeoff')[0] %>
+<% arr_day_names = %w(L M M J V S D) %>
+<% first_day_name = Date.new(month_to_show.year, month_to_show.month, 1).wday %>
+<% has_role = User.current.admin || User.current.roles_for_project(@project).include?(Role.find_by(:name => 'Jefe de proyecto')) %>
+<%
+  def round_to_quarter (val)
+    return (val * 4).round / 4.0
+  end
+%>
+
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag 'proforma', :plugin => 'proforma', media: 'all' %>
+<% end %>
+
+
+<div class="proforma-plugin">
+    
+
+    <h2>Proforma  <%= @project %></h2>
+    <%
+       feriadoStr = 'feriados'
+       var0 = Setting.plugin_proforma[feriadoStr]
+       prev_holidays = var0 ? var0.split(',') : []
+
+       if prev_holidays
+         prev_holidays = prev_holidays.select{|d| DateTime.strptime(d, '%Y-%m-%d') rescue false }.collect{|i| DateTime.strptime(i, '%Y-%m-%d')}
+         holidays_aux=[]
+         selected_month = month_to_show.month
+         selected_year = month_to_show.year
+         prev_holidays.each do |element|
+           elementStr = element.strftime('%Y-%m-%d')
+           if element.month == selected_month && element.year == selected_year && !holidays_aux.include?(elementStr)
+             holidays_aux.push(elementStr)
+           end
+         end
+         holidays = holidays_aux.sort
+       else
+         holidays = []
+       end
+    %>
+    <% var2 = Setting.plugin_proforma['block_'+@project[:id].to_s+'']
+       blocked_until = var2.to_s.strip.empty? ? DateTime.new(2014, 1, 1) : DateTime.strptime(var2, '%Y-%m-%d') %>
+
+    <div style="text-align: right;">
+        <span>
+          <a href="#" id="export_pdf" style="margin-right: 220px;">
+              Exportar a PDF (Chrome)
+          </a>
+        </span>
+        <% if has_role %>
+            <input type="text" name="invisibleInputText" type="hidden" autofocus="true" style="display: none;">
+
+            <div class="proforma-blocker">
+                <%= form_tag(action: 'block_proforma') do %>
+                <%= hidden_field_tag(:project_id, @project[:id]) %>
+                <label for="datepicker">
+                    Bloquear proformas hasta
+                </label>
+                <input type="text" id="datepicker" autocomplete="off" value="<%= blocked_until.strftime('%Y-%m-%d') %>" />
+                <%= submit_tag('Bloquear') %>
+        <% end %>
+        </div>
+        <% end %>
+
+    </div>
+
+
+
+
+    <div class="proforma-folder-logo">
+        <%= image_tag('folder-it-logo-header-blog.png', :plugin => 'proforma') %>
+    </div>
+
+    <% if has_role %>
+        <div class="doc-meta">
+            <p class="hidden-for-screen doc-meta"><span class="doc-version">R-P3.1/2</span> <span class="doc-vigencia">Vigencia: 01-Sep-2017</span> <span class="doc-title">PROFORMA STAFF AUGMENTATION</span></p>
+            <div class="mes">
+                <label for="month">Mes:</label>
+                <select name="change_month" id="month">
+                    <% @months.each do |m| %>
+                        <option value="<%= DateTime.new(m.tyear, m.tmonth) %>"><%= m.month_name(m.tmonth) + '/' + m.tyear.to_s %></option>
+                    <% end %>
+                    <% if @months.where(:tmonth => now.month, :tyear => now.year).length < 1 %>
+                        <option value="<%= DateTime.new(now.year, now.month, 1) %>" selected><%= TimeEntry.month_name(now.month) + '/' + now.year.to_s %></option>
+                    <% end %>
+                </select>
+                <p class="hidden-for-screen" id="hidden-month"></p>
+            </div>
+        </div>
+    <% end %>
+
+
+    <% html_title ('R-P3-1_Proforma_Staff_Augmentation_-_' + @project.to_s + '-' + month_to_show.strftime('%Y-%m')) %>
+    <%= form_tag(action: 'update_hours') do %>
+    <%= hidden_field_tag(:project_id, @project[:id]) %>
+    <table class="proforma-entry">
+        <thead>
+
+        <!-- create the bar for the days initials letter of the month-->
+        <tr>
+            <th class="first-th"></th>
+            <% (0..(this_month_days-1)).to_a.each do |d| %>
+                <th> <%= arr_day_names[((first_day_name-1) + d) % 7] %></th>
+            <% end %>
+            <th></th>
+            <th class="horas-habiles"></th>
+            <th class="horas-diff"></th>
+        </tr>
+
+        <!-- create the bar for the days numbers of the month-->
+        <tr>
+            <th>Recurso</th>
+            <% (1..this_month_days).to_a.each do |d| %>
+                <th> <%= d %></th>
+            <% end %>
+            <th> Total</th>
+            <th class="horas-habiles">H&aacute;biles</th>
+            <th class="horas-diff">Dif. Horas</th>
+        </tr>
+        </thead>
+
+        <!-- populates the proforma with the current members and the hours that they have pre charged -->
+        <tbody>
+        <% @proformas.each do |proforma| %>
+            <tr>
+                <%= hidden_field_tag(:user, proforma[:id]) %>
+                <%= hidden_field_tag(:month, params[:month]) %>
+                <td class="person"><%= proforma %>
+                </td>
+                <% (1..this_month_days).to_a.each do |d| %>
+                    <%
+                       date_time_new = DateTime.new(month_to_show.year, month_to_show.month, d)
+                       var1 = @time_entries.where(:spent_on => date_time_new, :user_id => proforma[:id], :project_id => @project[:id])[0]
+                       is_activity_timeoff = var1 ? var1[:activity_id] == time_entry_activity[:id] : false
+                    %>
+                    <td class="<%= ((date_time_new.saturday? || date_time_new.sunday? || holidays.include?(date_time_new.strftime('%Y-%m-%d'))) ?
+                            'non-working' :
+                            (is_activity_timeoff ? 'activity-timeoff' : 'working')) %> <%= (date_time_new <= blocked_until)?'disabled':'enabled' %>" >
+
+                        <div class="input-wrapper">
+                            <%= # noinspection RubyNestedTernaryOperatorsInspection
+
+                                text_field_tag("day[#{proforma[:id]}][#{d}][hours]",
+                                               var1 ? (round_to_quarter(var1[:hours]) != 0 ? round_to_quarter(var1[:hours]) : nil) : nil,
+                                               maxlength: 5, group: proforma[:id], disabled: date_time_new <= blocked_until) %>
+
+
+                            <%= hidden_field_tag("day[#{proforma[:id]}][#{d}][activityId]", is_activity_timeoff ? time_entry_activity[:id] : nil) %>
+                        </div>
+
+                    </td>
+                    <div class="comment-tooltip"><label>
+                        Comentarios
+                        <br/>
+
+
+                    <textarea name="<%= "day[#{proforma[:id]}][#{d}][comment]" %>"
+                              id="<%= "day_#{proforma[:id]}_#{d}_comment" %>" maxlength="100"
+                              data-person="<%= proforma %>"
+                              data-day="<%= d %>" cols="30"
+                              rows="4"
+                    ><%=
+                        # show comment if exists, else shows 'Timeoff' if necessary
+                        # noinspection RubyNestedTernaryOperatorsInspection
+                        var1 ? (var1[:comments].length != 0 ? var1[:comments] : (is_activity_timeoff ? 'Timeoff' : '')) : '' %></textarea>
+                    </label>
+
+                    </div>
+
+                <% end %>
+                <td id='<%= proforma[:id] %>'></td>
+                <td id="working_<%= proforma[:id] %>" class="horas-habiles"></td>
+                <td id="extra_<%= proforma[:id] %>" class="horas-diff"></td>
+            </tr>
+        <% end %>
+        </tbody>
+
+
+    </table>
+    <br/>
+
+      <p class="hide-when-print hint">Todos los decimales son redondeados a cuartos cuando se guardan los cambios.</p>
+
+
+      <% if has_role
+         @issue = Issue.where(:tracker_id =>  Tracker.where(:name => "Seguimiento")[0].id,
+                              :project_id => @project[:id],
+                              :start_date => month_to_show)
+         @issue_seguimiento = nil
+         if @issue && @issue[0]
+           @issue_seguimiento = @issue[0]
+         end
+         blocked_feedback = blocked_until >= DateTime.new(month_to_show.year, month_to_show.month, -1)
+    %>
+
+        <p class="proforma_seguimiento"><span>Satisfacción del cliente</span>
+            <textarea class="proforma_seguimiento" name="proforma_seguimiento" id="proforma_seguimiento" <% if blocked_feedback %> disabled="disabled" <% end %> ><%= @issue_seguimiento? @issue_seguimiento.description : "" %></textarea>
+        </p>
+        <br/>
+
+    <% end %>
+    <%= submit_tag('Submit') %>
+    <% end #if has_role %>
+
+    <br/>
+
+
+
+    <table class="comments-table">
+        <thead>
+        <tr>
+            <th>Persona</th>
+            <th>D&iacute;a</th>
+            <th>Comentarios</th>
+        </tr>
+        </thead>
+        <tbody id="comments-table">
+
+        </tbody>
+
+
+    </table>
+    <br/>
+    <% if holidays.size > 0 %>
+        <table id="holidays-table" class="holidays-table">
+            <thead>
+            <tr>
+                <th>D&iacute;a</th>
+                <th></th>
+            </tr>
+            </thead>
+            <% holidays.each do |h| %>
+                <tr>
+                    <td><%= h.to_s %></td>
+                    <td>Feriado</td>
+                </tr>
+            <% end %>
+        </table>
+    <% end %>
+
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        //---init
+        <% @proformas.each do |p| %>
+        computeTotal('<%= p[:id] %>');
+        <% end %>
+        <% if has_role %>
+        initMonthChange();
+        <% end %>
+        initDatePicker();
+        initInputBindings();
+        initTooltipBindings();
+        initCommentsTable();
+
+
+        //$('#comments-table').parent().css('width', $('.proforma-entry').css('width'));
+
+        $("#export_pdf").bind("click", function (e) {
+            // I don't want the href to be seen
+            e.preventDefault();
+//            < %if has_role %>
+            //
+//            $("#export_pdf_form").submit();
+//            < %else %>
+            if ($('#comments-table td').size() == 0) {
+                $('table.comments-table').css({display:'none'});
+            }
+            window.print();
+            //$('table.comments-table').css({display:'table'});
+//            < %end %>
+
+        });
+
+
+        function computeTotal(name) {
+            var total = 0;
+            var $2 = $("input[group='" + name + "']");
+            $2.each(function () {
+                var number = parseFloat($(this).val());
+                total += isNaN(number) ? 0 : number;
+            });
+            $('#' + name).text(total.toFixed(2));
+            var value = $2.parents('td.working').length * 8;
+            $('#extra_' + name).text((total - value).toFixed(2));
+            $('#working_' + name).text(value.toFixed(2));
+        }
+
+        function initDatePicker() {
+            var $datepicker = $("#datepicker");
+            $datepicker.datepicker({
+                maxDate: '+1m',
+                dateFormat: 'yy-mm-dd'
+            });
+            $datepicker.attr("name", "block_<%=@project[:id].to_s%>");
+        }
+
+        function initMonthChange() {
+            var $month = $('#month');
+            $month.val('<%=DateTime.new(month_to_show.year, month_to_show.month) %>');
+            $month.bind('change', function () {
+                window.location.replace(/month/.test(window.location.search) ? getModifiedHref($month) : (window.location.href + '&month=' + $month.val().slice(0, 10)));
+            });
+            $('#hidden-month').text($month.children(":selected").text());
+        }
+
+        function getModifiedHref($month) {
+            var currentLocation = window.location.href;
+            var n = currentLocation.indexOf("month=");
+            var i = currentLocation.indexOf("&project");
+            if(i>n){
+                return currentLocation.replace(currentLocation.substr(n, (i-n)), "month=" + $month.val().slice(0, 10));
+            }else{
+                return window.location.href.slice(0, -17) + '&month=' + $month.val().slice(0, 10);
+            }
+        }
+
+        function initInputBindings() {
+            var $id = $('[id^=day][id$=hours]');
+            $id.bind('change', function () {
+                var value = this.value;
+                if (!(value && value <= 24 && value > 0)) {
+                    this.value = null;
+                }
+                computeTotal($(this).attr("group"));
+            });
+
+            $id.bind('keydown', function (e) {
+                if (e.which === 32) {
+                    e.preventDefault();
+                    var offset = $(e.target).parents('.input-wrapper').offset();
+
+                    $(".comment-tooltip").finish().hide();
+                    var commentTooltipTextArea = $("#" + this.id.slice(0, -5) + "comment");
+
+                    commentTooltipTextArea.parent().parent().finish().show().css({
+                        //Above the input
+                        top: offset.top - commentTooltipTextArea.parents('.comment-tooltip').height() - $(e.target).height()+ 'px',
+                        left: offset.left - commentTooltipTextArea.parents('.comment-tooltip').outerWidth()/2 + $(e.target).width()/2 +'px'
+                    });
+
+                    commentTooltipTextArea.focus();
+                }else if (e.which === 39 || e.which === 37 ){
+                    e.preventDefault();
+                    var splitted = this.id.split("_");
+                    var userid = splitted[1];
+                    var nextday = parseInt(splitted[2]);
+                    e.which === 39?nextday++:nextday--;
+                    //TODO add check to the number of days of the month
+                    //TODO reaching the end/begining means to jump to the next user first/lastday?
+
+                    $("#day_"+ userid + "_" + nextday + "_hours").focus();
+
+                }else if (e.which === 38 || e.which === 40) {
+                    e.preventDefault();
+                    var splitted = this.id.split("_");
+                    var userid = splitted[1];
+                    var day = splitted[2];
+                    var rows = $(".proforma-entry").find("tbody > tr");
+                    for(var item in rows){
+                        if(isNaN(parseInt(item))){
+                            continue;
+                        }
+                        var index = parseInt(item);
+
+                        switch(e.which){
+                            case 38:
+                                if(index!= 0 && rows[index].children[0].value == userid){
+                                    var nextuser = rows[index - 1].children[0].value;
+                                    $("#day_"+ nextuser + "_" + splitted[2] + "_hours").focus();
+                                }
+                                break;
+                            case 40:
+                                if(index!= rows.length-1 && rows[index].children[0].value == userid){
+                                    var nextuser = rows[index + 1].children[0].value;
+                                    $("#day_"+ nextuser + "_" + splitted[2] + "_hours").focus();
+                                }
+                                break;
+                        }
+                    }
+                }<% if has_role %> else if (e.which == 84) {
+                    e.preventDefault();
+
+                    var $2 = $(this);
+                    if ($2.parent().parent().hasClass('working')) {
+                        $2.parent().parent().addClass("activity-timeoff").removeClass("working");
+                    } else if (!$2.parent().parent().hasClass('non-working')) {
+                        $2.parent().parent().removeClass("activity-timeoff").addClass("working");
+                    }
+
+                    var siblings = $2.siblings("input");
+                    siblings.val(siblings.val() ? '' : <%= time_entry_activity[:id] %>);
+                    siblings.val(siblings.val().trim());
+
+                    computeTotal($2.attr("group"));
+                    $(".comment-tooltip").finish().hide();
+                    var comment = $("#" + this.id.slice(0, -5) + "comment");
+                    if (comment.val().trim()) {
+//                        comment.val('');
+                    } else {
+                        comment.val('Timeoff');
+                    }
+                    $("#comments-table").html("");
+                    initCommentsTable();
+                }
+                <% end %>
+
+            });
+
+
+        }
+
+        function initTooltipBindings() {
+            var $comment = $('.comment-tooltip');
+
+            function hideAndFocus(e) {
+                e.preventDefault();
+                $comment.finish().hide();
+
+                $("#comments-table").html("");
+                initCommentsTable();
+            }
+
+            $comment.bind('keydown', function (e) {
+                //If esc || enter || tab
+                if (e.which === 27 || e.which === 13 || e.which === 9) {
+                    hideAndFocus(e);
+                    $("#" + $(this).find("textarea").attr("id").slice(0, -7) + "hours").focus();
+                }
+            });
+            $comment.bind('focusout', function (e) {
+                hideAndFocus(e);
+            });
+        }
+
+        function updateStack(stack, data){
+            for(var item in stack){
+                if(data.person===stack[item].person && data.comment===stack[item].comment){
+                    stack[item].day.push(data.day[0]);
+                    return;
+                }
+            }
+            stack.push(data)
+        }
+
+        function initCommentsTable() {
+            var stack=[];
+            $(".comment-tooltip").each(function (index) {
+                var textArea = $(this).find("textarea");
+                var text = textArea.val();
+                if (text.trim()) {
+                    var data={
+                        "person":textArea.attr("data-person"),
+                        "comment": text,
+                        "day": [textArea.attr("data-day")]
+                    };
+                    updateStack(stack, data);
+                }
+            });
+            addToCommentsTable(stack)
+        }
+
+        function addToCommentsTable(stack){
+            for(var item in stack){
+                $('#comments-table').append("<tr>" +
+                "<td class='person'>" + stack[item].person +
+                "</td><td>" + stack[item].day +
+                "</td><td class='comment'>" + stack[item].comment + "</td></tr>");
+            }
+        }
+
+
+    });
+</script>
