@@ -1,0 +1,18 @@
+<%= form_for(@project) do |f| %>
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :created_on %>
+    <%= f.text_field :created_on %>
+  </div>
+  <div class="field">
+    <%= f.label :updated_on %>
+    <%= f.text_field :updated_on %>
+  </div>
+  <div class="field">
+    <%= f.label :status %>
+    <%= f.text_field :status %>
+  </div>
+<% end %>

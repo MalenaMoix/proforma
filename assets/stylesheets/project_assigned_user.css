@@ -1,0 +1,325 @@
+/* The whole thing */
+
+.comment-tooltip {
+    display: none;
+    z-index: 1000;
+    position: absolute;
+    border: 1px solid #CCC;
+    background: #628DB6;
+    padding: 5px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 7px;
+    color: white;
+}
+
+textarea {
+    resize: none;
+}
+
+.comment-tooltip :after {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    margin-left: -5px;
+    width: 0;
+    border-top: 8px solid #628DB6;
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    content: " ";
+    font-size: 0;
+    line-height: 0;
+}
+
+.proforma-folder-logo img {
+    width: 40%;
+}
+
+.proforma-plugin thead tr {
+    background-color: #783d64;
+    color: white;
+}
+
+.proforma-plugin table {
+    padding: 0;
+    border-collapse: collapse;
+    border: 1px solid grey;
+}
+
+.proforma-plugin table tr {
+    border: 1px solid grey;
+}
+
+.proforma-plugin .proforma-blocker {
+    margin-right: 220px;
+}
+
+.proforma-plugin td {
+    border: 1px solid grey;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    font-size: 10pt;
+    width: 30px;
+    padding: 0px 2px !important;
+    margin: 0px !important;
+    height: 18px;
+}
+
+.proforma-plugin th {
+    padding: 0px 2px !important;
+    margin: 0px !important;
+}
+
+.proforma-plugin td.disabled input {
+    color: grey;
+    font-style: italic;
+}
+
+.proforma-plugin input[type=text] {
+    text-align: center;
+    font-size: 9pt;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: 18px;
+}
+
+@media (max-width: 1380px) {
+    .proforma-plugin input[type=text] {
+        font-size: 8.4pt;
+    }
+    .proforma-plugin td {
+        width: 28px;
+    }
+}
+
+@media (max-width: 1340px) {
+    .proforma-plugin input[type=text] {
+        font-size: 7pt;
+    }
+}
+
+.proforma-plugin td input {
+    width: 100% !important;
+}
+
+.hasDatepicker {
+    width: auto !important;
+}
+
+.proforma-plugin td.person {
+    text-align: left;
+    width: 160px !important;
+}
+
+.proforma-plugin td.working input,
+.proforma-plugin td.non-working input,
+.proforma-plugin td.activity-timeoff input {
+    border: none;
+    background-color: transparent;
+}
+
+.proforma-plugin td.working {}
+
+.proforma-plugin td.non-working,
+.proforma-plugin td.activity-timeoff {
+    background-color: #ccc;
+}
+
+@media print {
+    .proforma-folder-logo {
+        text-align: center;
+    }
+    div.doc-meta {
+        padding: 0;
+        text-align: center;
+    }
+    div.doc-meta div.mes {
+        font-size: 11pt;
+        margin: 10px 0;
+    }
+    .doc-meta {
+        font-size: 12pt;
+        font-weight: bold;
+    }
+    .doc-vigencia {
+        font-weight: normal;
+        font-size: 11pt;
+    }
+    .proforma-plugin input[type=submit] {
+        display: none !important;
+    }
+    input[disabled] {
+        background-color: transparent !important;
+        color: #000 !important;
+    }
+    .proforma-plugin td input {
+        width: 100% !important;
+        font-style: normal !important;
+        color: #000 !important;
+    }
+    .proforma-plugin td.person {
+        text-align: left;
+        width: 160px !important;
+    }
+    .proforma-plugin td.working {}
+    .proforma-plugin td.non-working,
+    .proforma-plugin td.activity-timeoff {
+        background-color: #ccc;
+    }
+    .proforma-plugin .proforma-blocker {
+        display: none;
+    }
+    .proforma-plugin select#month {
+        display: none;
+    }
+    .comment-tooltip {
+        display: none;
+    }
+    .flash.notice {
+        display: none;
+    }
+    .hidden-for-screen {
+        display: inline !important;
+    }
+    #export_pdf {
+        display: none;
+    }
+    table.proforma-entry,
+    table#comments-table,
+    table.comments-table,
+    table#holidays-table,
+    p.proforma_seguimiento {
+        margin: auto;
+        width: 1165px !important;
+    }
+    td.horas-habiles,
+    td.horas-diff,
+    th.horas-habiles,
+    th.horas-diff {
+        display: none;
+    }
+}
+
+.hidden-for-screen {
+    display: none;
+}
+
+p.proforma_seguimiento {
+    width: 1165px !important;
+}
+
+textarea.proforma_seguimiento {
+    width: 1159px;
+    border: 1px solid grey;
+    height: 4rem;
+    font-size: 1rem;
+}
+
+table.comments-table,
+table.holidays-table {
+    width: 1165px;
+}
+
+.comment {
+    width: 600px !important;
+    text-align: left !important;
+}
+
+.hint {
+    font-size: 11px;
+}
+
+
+/* Boton manage members */
+
+.manage-members {
+    display: inline-block;
+    border-radius: 4px;
+    border: none;
+    color: #783d64;
+    text-align: center;
+    width: 180px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 5px;
+    box-shadow: inset 0px 1px 0px 0px #ffffff;
+    background: linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
+    background-color: #f9f9f9;
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 6px 24px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #ffffff;
+}
+
+.manage-members span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+}
+
+.manage-members span:after {
+    content: '\00bb';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+}
+
+.manage-members:hover span {
+    padding-right: 25px;
+}
+
+.manage-members:hover span:after {
+    opacity: 1;
+    right: 0;
+}
+
+.manage-members:active {
+    position: relative;
+    top: 1px;
+}
+
+
+/*Modal*/
+
+.bg-modal {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: none;
+}
+
+.modal-content {
+    width: 1200px;
+    height: 600px;
+    background-color: white;
+    border-radius: 4px;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+}
+
+.input-modal {
+    width: 50%;
+    display: block;
+    margin: 15px auto;
+}
+
+.close {
+    position: absolute;
+    top: 0;
+    right: 14px;
+    font-size: 42px;
+    transform: rotate(45deg);
+    cursor: pointer;
+}

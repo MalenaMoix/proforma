@@ -4,3 +4,5 @@ get 'proforma', :to => 'proforma#index'
 post 'proforma/update_hours', :to => 'proforma#update_hours'
 post 'proforma/block_proforma', :to => 'proforma#block_proforma'
 post 'proforma/export_pdf', :to => 'proforma#export_pdf'
+
+#get 'proforma', :to => 'project_assigned_user#index'

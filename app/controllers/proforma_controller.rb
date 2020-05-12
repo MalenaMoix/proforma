@@ -4,6 +4,8 @@ class ProformaController < ApplicationController
   # noinspection RubyResolve
   before_action :find_project, :authorize, :only => [:index, :block_proforma, :update_hours]
 
+  
+
 
   def index
     current = User.current
