@@ -16,8 +16,8 @@
   <%= stylesheet_link_tag 'proforma', :plugin => 'proforma', media: 'all' %>
 <% end %>
 <div class="proforma-plugin">
-  <h1> <%= @assignations[0].project_id %> </h1>
   <h2>Proforma  <%= @project %></h2>
+  <button class="manage-members" id="button" style="vertical-align:middle"><span>Manage members </span></button>
   <%
        feriadoStr = 'feriados'
        var0 = Setting.plugin_proforma[feriadoStr]
@@ -456,5 +456,25 @@
                 }
             
             
+            });
+          </script>
+          <div class="bg-modal">
+            <div class="modal-content">
+              <div class="close">+</div>
+              <h3>Miembros</h3>
+              <form>
+                <input class="input-modal" type="text" placeholder="Member name">
+                <input class="input-modal" type="text" placeholder="Member name">
+                <a href="" class="button">Close</a>
+              </form>
+            </div>
+          </div>
+          <script>
+            document.getElementById('button').addEventListener('click', function(){
+                document.querySelector('.bg-modal').style.display = 'flex';
+            });
+            
+            document.querySelector('.close').addEventListener('click', function(){
+                document.querySelector('.bg-modal').style.display = 'none';
             });
           </script>

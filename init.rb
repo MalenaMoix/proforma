@@ -10,4 +10,5 @@ Redmine::Plugin.register :proforma do
     permission :block_proforma, :proforma => :block_proforma
   end
   menu :project_menu, :proforma, {:controller => 'proforma', :action => 'index'}, :caption => 'Proforma', :after => :activity, :param => :project_id
+
 end

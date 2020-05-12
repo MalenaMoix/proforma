@@ -1,0 +1,3 @@
+module ProjectsHelperPatch
+
+end
