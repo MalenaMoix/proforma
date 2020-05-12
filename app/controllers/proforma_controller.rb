@@ -6,6 +6,8 @@ class ProformaController < ApplicationController
 
 
   def index
+    @assignations = ProjectAssignedUser.all
+
     current = User.current
     if current.admin || has_role?(current, 'Jefe de proyecto')
       get_manager_index

@@ -12,3 +12,11 @@ class CreateProjectAssignedUsers < ActiveRecord::Migration[5.2]
     end
   end
 end
+
+
+# t.references
+# le dice a la DB que cree una columna en la tabla
+# foreign_key: true
+# le dice a la DB que la columna contiene foreign_key de otra tabla
+# belongs_to
+# le dice al Modelo que este pertenece a otro Modelo
