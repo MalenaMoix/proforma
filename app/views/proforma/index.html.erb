@@ -459,16 +459,31 @@
             });
           </script>
           <div class="bg-modal">
+            <!-- Modal content-->
             <div class="modal-content">
               <div class="close">+</div>
-              <%= render 'formulario' %>
+              <div class="tab_triger">
+                <ul>
+                  <li><label for="tab1">Miembros actuales del proyecto</label></li>
+                  <li><label for="tab2">Agregar un nuevo miembro al proyecto</label></li>
+                </ul>
+              </div>
+              <div class="tab_container_wrap">
+                <input type="radio" checked id="tab1" name="1">
+                <div class="tab_content_box">
+                  <%= render 'manage_members' %>
+                </div>
+                <input type="radio" id="tab2" name="1">
+                <div class="tab_content_box">
+                  <%= render 'new_member' %>
+                </div>
+              </div>
             </div>
           </div>
           <script>
             document.getElementById('button').addEventListener('click', function(){
                 document.querySelector('.bg-modal').style.display = 'flex';
             });
-            
             document.querySelector('.close').addEventListener('click', function(){
                 document.querySelector('.bg-modal').style.display = 'none';
             });
