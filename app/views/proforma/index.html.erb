@@ -458,24 +458,20 @@
             
             });
           </script>
+          <!-- Modal displayed when click on button Manage members -->
           <div class="bg-modal">
             <!-- Modal content-->
             <div class="modal-content">
               <div class="close">+</div>
               <div class="tab_triger">
                 <ul>
-                  <li><label for="tab1">Miembros actuales del proyecto</label></li>
-                  <li><label for="tab2">Agregar un nuevo miembro al proyecto</label></li>
+                  <li><label for="tab1">Manage members</label></li>
                 </ul>
               </div>
               <div class="tab_container_wrap">
                 <input type="radio" checked id="tab1" name="1">
                 <div class="tab_content_box">
-                  <%= render 'manage_members' %>
-                </div>
-                <input type="radio" id="tab2" name="1">
-                <div class="tab_content_box">
-                  <%= render 'new_member' %>
+                  <%= render :partial => 'project_assigned_user/manage_members' %>
                 </div>
               </div>
             </div>

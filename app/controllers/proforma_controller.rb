@@ -6,7 +6,6 @@ class ProformaController < ApplicationController
 
   
 
-
   def index
     current = User.current
     if current.admin || has_role?(current, 'Jefe de proyecto')
@@ -14,6 +13,12 @@ class ProformaController < ApplicationController
     else
       get_dev_index(current)
     end
+  end
+
+  def manage_members
+  end
+
+  def new_member
   end
 
 
@@ -375,6 +380,10 @@ class ProformaController < ApplicationController
 
   def find_project
     @project = Project.find(params[:project_id])
+
+    @members = Member.where(:project_id => @project[:id])
+    @users = User.all
+    @empleados = ProjectAssignedUser.all
   end
 
 

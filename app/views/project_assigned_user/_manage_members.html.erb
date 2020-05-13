@@ -1,0 +1,41 @@
+<!-- Stylesheet -->
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag 'proforma', :plugin => 'proforma', media: 'all' %>
+<% end %>
+<!-- Select box users -->
+<div class="select-user">
+  <label class="label-users" for="users">Agregar nuevo miembro al proyecto:</label>
+  <select id="users">
+    <option>Seleccione un usuario</option>
+    <% @users.each do |u| %>
+      <option><%= u.firstname %> <span><%= u.lastname %></span></option>
+    <% end %>
+  </select>
+  <span> <button class="button-add">Add</button> </span>
+</div>
+<br/>
+<br/>
+<div class="display-members" style="overflow-x:auto;">
+  <table class="table-members">
+    <tr>
+      <th>Miembro</th>
+      <th>Fecha Inicio</th>
+      <th>Fecha Fin</th>
+      <th>Rate</th>
+      <th>Horas asignadas</th>
+      <th>Comentario</th>
+      <th>Acci&oacute;n</th>
+    </tr>
+    <% for @empleado in @empleados %>
+      <tr>
+        <td><%= @empleado.user %></td>
+        <td><%= @empleado.start_date %></td>
+        <td><%= @empleado.end_date %></td>
+        <td><%= @empleado.hour_rate %></td>
+        <td><%= @empleado.assigned_hours %></td>
+        <td><%= @empleado.comment %></td>
+        <td> <button class="button-edit">Edit</button> <span><button class="button-save">Save</button></span> </td>
+      </tr>
+    <% end %>
+  </table>
+</div>

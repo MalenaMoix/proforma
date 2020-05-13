@@ -35,6 +35,9 @@ textarea {
     width: 40%;
 }
 
+
+/* PROFORMA TABLE */
+
 .proforma-plugin thead tr {
     background-color: #783d64;
     color: white;
@@ -285,7 +288,7 @@ table.holidays-table {
 }
 
 
-/* MODAL */
+/* MODALS */
 
 * {
     box-sizing: border-box;
@@ -309,7 +312,35 @@ table.holidays-table {
     height: 600px;
     background-color: white;
     border-radius: 4px;
-    text-align: center;
+    /*text-align: center;*/
+    padding: 20px;
+    position: relative;
+}
+
+.modal-content span {
+    vertical-align: middle;
+    align-items: center;
+}
+
+.modal {
+    width: 70%;
+    height: 70%;
+    background-color: rgba(0, 0, 0, 0.7);
+    position: absolute;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: none;
+    margin: 50px auto;
+}
+
+.content {
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    border-radius: 4px;
+    /*text-align: center;*/
     padding: 20px;
     position: relative;
 }
@@ -327,12 +358,12 @@ table.holidays-table {
     padding: 8px 15px;
     cursor: pointer;
     min-width: 100px;
-    background: #e6e6e6;
+    background: #f0f0f0;
     border-radius: 8px 8px 0 0;
     text-align: center;
     font-weight: bold;
     font-family: arial;
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .tab_triger ul li:nth-child(1) label {
@@ -340,7 +371,7 @@ table.holidays-table {
 }
 
 .tab_triger ul li:nth-child(2) label {
-    background: #e6e6e6;
+    background: #f0f0f0;
 }
 
 .tab_container_wrap input {
@@ -367,7 +398,7 @@ table.holidays-table {
 }
 
 .tab_content_box:nth-of-type(1) {
-    background: #e6e6e6;
+    background: #f0f0f0;
 }
 
 .tab_content_box h2 {
@@ -384,7 +415,57 @@ table.holidays-table {
     position: absolute;
     top: 0;
     right: 14px;
-    font-size: 42px;
+    font-size: 30px;
     transform: rotate(45deg);
     cursor: pointer;
+}
+
+.close-modal {
+    position: absolute;
+    top: 0;
+    right: 14px;
+    font-size: 30px;
+    transform: rotate(45deg);
+    cursor: pointer;
+}
+
+
+/* MODAL TABLE */
+
+.table-members td {
+    vertical-align: middle;
+    text-align: left;
+    padding: 10px;
+    margin: 0;
+    font-size: 13px;
+    width: 30px;
+    margin: 0px !important;
+    height: 18px;
+    border-top: 1px solid gray;
+    border-collapse: collapse;
+}
+
+.table-members th {
+    height: 30px;
+    padding: 10px;
+    text-align: left;
+    vertical-align: middle;
+    /*padding: 0px 2px !important;*/
+    margin: 0px !important;
+    /*border: 1px solid grey;*/
+    border-collapse: collapse;
+    font-size: 14px;
+    color: white;
+    background-color: #783d64;
+}
+
+.table-members {
+    border-collapse: collapse;
+    width: 100%;
+    padding: 0;
+    font-family: arial;
+}
+
+.label-users {
+    font-size: 12px;
 }
