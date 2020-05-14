@@ -7,14 +7,14 @@
   <%= form_with do %>
     <%= hidden_field_tag(:project_id, @project[:id]) %>
     <label class="label-users" for="users">Agregar nuevo miembro al proyecto:</label>
-    <%= select_tag(:user_name, options_for_select(@users_no_members)) %>
+    <%= select_tag(:user_id, options_for_select(@users_map)) %>
     <span> <%= button_tag "Add", :action => 'new_project_assigned_user' %> </span>
   <% end %>
 </div>
 <br/>
 <br/>
-<div class="display-members" style="overflow-x:auto;">
-  <table class="table-members"  style="overflow-x:auto;">
+<div class="display-members">
+  <table class="table-members">
     <tr>
       <th>Miembro</th>
       <th>Fecha Inicio</th>
@@ -36,7 +36,8 @@
           <button class="button-edit" id="button-edit">Edit</button>
           <span>
             <%= button_tag "Save", data: { confirm: "Are you sure?" } %>
-          </span> </td>
+          </span>
+        </td>
       </tr>
     <% end %>
   </table>

@@ -6,15 +6,17 @@ class ProformaController < ApplicationController
  
 
   def new_project_assigned_user
-    name_user_selected = params[:user_name]
     project_id = params[:project_id]
-    delimitador = " "
-    nombre_apellido = name_user_selected.split(delimitador)
-    user_selected = User.where(:firstname => nombre_apellido[0], :lastname => nombre_apellido[1]).first
+    id_user_selected = params[:user_id]
+    user_selected = User.where(:id => id_user_selected).first
 
     @employee = ProjectAssignedUser.new(:project_id => project_id, :user_id => user_selected[:id])
     @employee.save
+
+
+    #render :partial => 'project_assigned_user/manage_members'
   end
+
 
   def index
     current = User.current
@@ -404,5 +406,8 @@ class ProformaController < ApplicationController
     @ids = @ids_users - @ids_empleados
     # Todos los User que no estan  asignados al proyecto para cargarlos en el select box
     @users_no_members = User.where(:id => @ids)
+
+    # Se usa este map para el select tag en manage members
+    @users_map = @users_no_members.map {|user| [user.firstname + " " + user.lastname, user.id]}
   end
 end
