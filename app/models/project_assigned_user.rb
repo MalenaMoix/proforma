@@ -6,9 +6,6 @@ class ProjectAssignedUser < ActiveRecord::Base
     belongs_to :project
     belongs_to :user
 
-
-    def new
-        @member = ProjectAssignedUser.new
-    end
+    @project_assigned_user = ProjectAssignedUser.all
 
 end

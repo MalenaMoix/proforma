@@ -3,8 +3,18 @@ class ProformaController < ApplicationController
 
   # noinspection RubyResolve
   before_action :find_project, :authorize, :only => [:index, :block_proforma, :update_hours]
+ 
 
-  
+  def new_project_assigned_user
+    name_user_selected = params[:user_name]
+    project_id = params[:project_id]
+    delimitador = " "
+    nombre_apellido = name_user_selected.split(delimitador)
+    user_selected = User.where(:firstname => nombre_apellido[0], :lastname => nombre_apellido[1]).first
+
+    @employee = ProjectAssignedUser.new(:project_id => project_id, :user_id => user_selected[:id])
+    @employee.save
+  end
 
   def index
     current = User.current
@@ -13,12 +23,6 @@ class ProformaController < ApplicationController
     else
       get_dev_index(current)
     end
-  end
-
-  def manage_members
-  end
-
-  def new_member
   end
 
 
@@ -384,7 +388,21 @@ class ProformaController < ApplicationController
     @members = Member.where(:project_id => @project[:id])
     @users = User.all
     @empleados = ProjectAssignedUser.all
+
+
+    # IDs de todos los User
+    @ids_users = []
+    for @user in @users
+      @ids_users.push @user[:id]
+    end
+    # IDs de todos los ProjectAssignedUser
+    @ids_empleados = []
+    for @empleado in @empleados
+      @ids_empleados.push @empleado[:user_id]
+    end
+    # IDs de los User que no estan asignados al proyecto
+    @ids = @ids_users - @ids_empleados
+    # Todos los User que no estan  asignados al proyecto para cargarlos en el select box
+    @users_no_members = User.where(:id => @ids)
   end
-
-
 end

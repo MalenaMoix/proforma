@@ -4,19 +4,17 @@
 <% end %>
 <!-- Select box users -->
 <div class="select-user">
-  <label class="label-users" for="users">Agregar nuevo miembro al proyecto:</label>
-  <select id="users">
-    <option>Seleccione un usuario</option>
-    <% @users.each do |u| %>
-      <option><%= u.firstname %> <span><%= u.lastname %></span></option>
-    <% end %>
-  </select>
-  <span> <button class="button-add">Add</button> </span>
+  <%= form_with do %>
+    <%= hidden_field_tag(:project_id, @project[:id]) %>
+    <label class="label-users" for="users">Agregar nuevo miembro al proyecto:</label>
+    <%= select_tag(:user_name, options_for_select(@users_no_members)) %>
+    <span> <%= button_tag "Add", :action => 'new_project_assigned_user' %> </span>
+  <% end %>
 </div>
 <br/>
 <br/>
 <div class="display-members" style="overflow-x:auto;">
-  <table class="table-members">
+  <table class="table-members"  style="overflow-x:auto;">
     <tr>
       <th>Miembro</th>
       <th>Fecha Inicio</th>
@@ -28,13 +26,17 @@
     </tr>
     <% for @empleado in @empleados %>
       <tr>
-        <td><%= @empleado.user %></td>
-        <td><%= @empleado.start_date %></td>
-        <td><%= @empleado.end_date %></td>
-        <td><%= @empleado.hour_rate %></td>
-        <td><%= @empleado.assigned_hours %></td>
-        <td><%= @empleado.comment %></td>
-        <td> <button class="button-edit">Edit</button> <span><button class="button-save">Save</button></span> </td>
+        <td class="table-user-name" id="table-user-name"><%= @empleado.user %></td>
+        <td class="table-start-date" id="table-start-date"><%= @empleado.start_date %></td>
+        <td class="table-end-date" id="table-end-date"><%= @empleado.end_date %></td>
+        <td class="table-hour-rate" id="table-hour-rate"><%= @empleado.hour_rate %></td>
+        <td class="table-assigned-hours" id="table-assigned-hours"><%= @empleado.assigned_hours %></td>
+        <td class="table-comment" id="table-comment"><%= @empleado.comment %></td>
+        <td class="table-buttons" id="table-buttons">
+          <button class="button-edit" id="button-edit">Edit</button>
+          <span>
+            <%= button_tag "Save", data: { confirm: "Are you sure?" } %>
+          </span> </td>
       </tr>
     <% end %>
   </table>

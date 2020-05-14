@@ -118,8 +118,7 @@
             <tr>
                 <%= hidden_field_tag(:user, proforma[:id]) %>
                 <%= hidden_field_tag(:month, params[:month]) %>
-                <td class="person"><%= proforma %>
-                </td>
+                <td class="person"><%= proforma %> </td>
                 <% (1..this_month_days).to_a.each do |d| %>
                     <%
                        date_time_new = DateTime.new(month_to_show.year, month_to_show.month, d)
