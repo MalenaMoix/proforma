@@ -15,18 +15,18 @@ class ProformaController < ApplicationController
     @employee = ProjectAssignedUser.new(:project_id => project_id, :user_id => user_selected[:id])
     @employee.save
 
-
     # TODO refrescar la pantalla cuando se agrega nuevo miembro o que aparezca directamente en la tabla
     #render :partial => 'project_assigned_user/manage_members'
   end
 
   def update_project_assigned_user
-
+    username = params[:username]
+    startdate = params[:startdate]
+    enddate = params[:enddate]
+    hourrate = params[:hourrate]
+    hours = params[:hours]
+    comment = params[:comment]
   end
-
-
-
-
 
 
 

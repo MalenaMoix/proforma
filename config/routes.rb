@@ -9,4 +9,4 @@ post 'proforma/export_pdf', :to => 'proforma#export_pdf'
 
 # OPTIMIZE
 post 'proforma', :to => 'proforma#new_project_assigned_user'
-#post 'proforma/update_project_assigned_user', :to => 'proforma#update_project_assigned_user'
+put 'proforma/update_project_assigned_user', :to => 'proforma#update_project_assigned_user'

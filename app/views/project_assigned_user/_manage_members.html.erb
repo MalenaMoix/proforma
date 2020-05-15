@@ -29,46 +29,66 @@
       </thead>
       <% for @empleado in @empleados %>
         <tr>
-          <td class="table-user-name" id="table-user-name"><%= @empleado.user %></td>
-          <td class="table-start-date" id="table-start-date"><%= @empleado.start_date %></td>
-          <td class="table-end-date" id="table-end-date"><%= @empleado.end_date %></td>
-          <td class="table-hour-rate" id="table-hour-rate"><%= @empleado.hour_rate %></td>
-          <td class="table-assigned-hours" id="table-assigned-hours"><%= @empleado.assigned_hours %></td>
-          <td class="table-comment" id="table-comment"><%= @empleado.comment %></td>
-          <td class="table-buttons" id="table-buttons"> <button class="button-edit">Edit</button>
-            <span>
-              <button class="button-ok">Ok</button>
-              <button class="button-cancel">Cancel</button>
-              <%= button_tag "Save", data: { confirm: "Are you sure?" }, class: "button-save", disabled: true %>
-            </span>
-          </td>
+          <%= form_with(url: "proforma/update_project_assigned_user", method: "put", onsubmit: "getContent()") do %>
+            <!-- PARAMS -->
+            <!-- TODO buscar una manera de solo enviar los campos que fueron editados -->
+            <td class="table-user-name" id="table-user-name">
+              <input id="username" name="username" type="text" value="<%= @empleado.user %>"/><%= @empleado.user %>
+            </td>
+            <td class="table-start-date" id="table-start-date">
+              <input id="startdate" name="startdate" type="text"/><%= @empleado.start_date %>
+            </td>
+            <td class="table-end-date" id="table-end-date">
+              <input id="enddate" name="enddate" type="text"/><%= @empleado.end_date %>
+            </td>
+            <td class="table-hour-rate" id="table-hour-rate">
+              <input id="hourrate" name="hourrate" type="text"/><%= @empleado.hour_rate %>
+            </td>
+            <td class="table-assigned-hours" id="table-assigned-hours">
+              <input id="hours" name="hours" type="text"/><%= @empleado.assigned_hours %>
+            </td>
+            <td class="table-comment" id="table-comment">
+              <input id="comment" name="comment" type="text"/><%= @empleado.comment %>
+            </td>
+            <td class="table-buttons">
+              <button class="button-edit">Edit</button>
+              <span>
+                <button class="button-ok">Ok</button>
+                <button class="button-cancel">Cancel</button>
+                <%= button_tag "Save", data: { confirm: "Are you sure?" }, class: "button-save" %>
+              </span>
+            </td>
+          <% end %>
         </tr>
       <% end %>
     </tbody>
   </table>
 </div>
+<!-- Obtener contenido de los campos editables -->
+<script type="text/javascript">
+  function getContent(){
+    document.getElementById("comment").value = document.getElementById("table-comment").innerHTML;
+  }
+</script>
 <!-- Manejo del contenido editable de la tabla -->
 <script type="text/javascript">
   $(document).find('.button-ok').hide();
   $(document).find('.button-cancel').hide();
   
   $(document).on('click', '.button-edit', function () {
-    event.preventDefault();
-  
-    $(document).find('.button-edit').hide();
-    $(document).find('.button-save').hide();
-    $(document).find('.button-ok').show();
-    $(document).find('.button-cancel').show();
   
     var tr = $(this).closest('tr');
+    tr.find('.button-ok').show();
+    tr.find('.button-cancel').show();
+    tr.find('.button-edit').hide();
+    tr.find('.button-save').hide();
+  
     tr.find('.table-start-date').attr('contenteditable','true');
     tr.find('.table-end-date').attr('contenteditable','true');
     tr.find('.table-hour-rate').attr('contenteditable','true');
     tr.find('.table-assigned-hours').attr('contenteditable','true');
     tr.find('.table-comment').attr('contenteditable','true');
-  
     $(this).focus();
-  
   
     //Guardar los datos originales
     tr.find('.table-start-date').attr('original_entry', $(this).html());
@@ -79,13 +99,12 @@
   })
   
   $(document).on('click', '.button-ok', function () {
-    $(document).find('.button-edit').show();
-    $(document).find('.button-save').show();
-  
-    $(document).find('.button-ok').hide();
-    $(document).find('.button-cancel').hide();
-  
     var tr = $(this).closest('tr');
+    tr.find('.button-ok').hide();
+    tr.find('.button-cancel').hide();
+    tr.find('.button-edit').show();
+    tr.find('.button-save').show();
+  
     tr.find('.table-start-date').attr('contenteditable','false');
     tr.find('.table-end-date').attr('contenteditable','false');
     tr.find('.table-hour-rate').attr('contenteditable','false');
@@ -98,12 +117,11 @@
   })
   
   $(document).on('click', '.button-cancel', function () {
-    $(document).find('.button-edit').show();
-    $(document).find('.button-save').show();
-    $(document).find('.button-ok').hide();
-    $(document).find('.button-cancel').hide();
-  
     var tr = $(this).closest('tr');
+    tr.find('.button-ok').hide();
+    tr.find('.button-cancel').hide();
+    tr.find('.button-edit').show();
+    tr.find('.button-save').show();
   
     tr.find('.table-start-date').attr('contenteditable','false');
     tr.find('.table-end-date').attr('contenteditable','false');
