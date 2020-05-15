@@ -5,6 +5,8 @@ class ProformaController < ApplicationController
   before_action :find_project, :authorize, :only => [:index, :block_proforma, :update_hours]
  
 
+  # NUEVOS METODOS
+  # OPTIMIZE tal vez estos metodos se puedan pasar al project_assigned_user_controller
   def new_project_assigned_user
     project_id = params[:project_id]
     id_user_selected = params[:user_id]
@@ -14,9 +16,21 @@ class ProformaController < ApplicationController
     @employee.save
 
 
+    # TODO refrescar la pantalla cuando se agrega nuevo miembro o que aparezca directamente en la tabla
     #render :partial => 'project_assigned_user/manage_members'
   end
 
+  def update_project_assigned_user
+
+  end
+
+
+
+
+
+
+
+  # COMIENZO METODOS QUE YA ESTABNA EN PROFORMA
 
   def index
     current = User.current
@@ -392,6 +406,9 @@ class ProformaController < ApplicationController
     @empleados = ProjectAssignedUser.all
 
 
+
+    # OPTIMIZE
+    # Tal vez se pueda meter esto en un metodo o hacerlo de otra forma
     # IDs de todos los User
     @ids_users = []
     for @user in @users

@@ -15,30 +15,110 @@
 <br/>
 <div class="display-members">
   <table class="table-members">
-    <tr>
-      <th>Miembro</th>
-      <th>Fecha Inicio</th>
-      <th>Fecha Fin</th>
-      <th>Rate</th>
-      <th>Horas asignadas</th>
-      <th>Comentario</th>
-      <th>Acci&oacute;n</th>
-    </tr>
-    <% for @empleado in @empleados %>
-      <tr>
-        <td class="table-user-name" id="table-user-name"><%= @empleado.user %></td>
-        <td class="table-start-date" id="table-start-date"><%= @empleado.start_date %></td>
-        <td class="table-end-date" id="table-end-date"><%= @empleado.end_date %></td>
-        <td class="table-hour-rate" id="table-hour-rate"><%= @empleado.hour_rate %></td>
-        <td class="table-assigned-hours" id="table-assigned-hours"><%= @empleado.assigned_hours %></td>
-        <td class="table-comment" id="table-comment"><%= @empleado.comment %></td>
-        <td class="table-buttons" id="table-buttons">
-          <button class="button-edit" id="button-edit">Edit</button>
-          <span>
-            <%= button_tag "Save", data: { confirm: "Are you sure?" } %>
-          </span>
-        </td>
-      </tr>
-    <% end %>
+    <tbody class="content-members">
+      <thead>
+        <tr>
+          <th>Miembro</th>
+          <th>Fecha Inicio</th>
+          <th>Fecha Fin</th>
+          <th>Rate</th>
+          <th>Horas asignadas</th>
+          <th>Comentario</th>
+          <th>Acci&oacute;n</th>
+        </tr>
+      </thead>
+      <% for @empleado in @empleados %>
+        <tr>
+          <td class="table-user-name" id="table-user-name"><%= @empleado.user %></td>
+          <td class="table-start-date" id="table-start-date"><%= @empleado.start_date %></td>
+          <td class="table-end-date" id="table-end-date"><%= @empleado.end_date %></td>
+          <td class="table-hour-rate" id="table-hour-rate"><%= @empleado.hour_rate %></td>
+          <td class="table-assigned-hours" id="table-assigned-hours"><%= @empleado.assigned_hours %></td>
+          <td class="table-comment" id="table-comment"><%= @empleado.comment %></td>
+          <td class="table-buttons" id="table-buttons"> <button class="button-edit">Edit</button>
+            <span>
+              <button class="button-ok">Ok</button>
+              <button class="button-cancel">Cancel</button>
+              <%= button_tag "Save", data: { confirm: "Are you sure?" }, class: "button-save", disabled: true %>
+            </span>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
   </table>
 </div>
+<!-- Manejo del contenido editable de la tabla -->
+<script type="text/javascript">
+  $(document).find('.button-ok').hide();
+  $(document).find('.button-cancel').hide();
+  
+  $(document).on('click', '.button-edit', function () {
+    event.preventDefault();
+  
+    $(document).find('.button-edit').hide();
+    $(document).find('.button-save').hide();
+    $(document).find('.button-ok').show();
+    $(document).find('.button-cancel').show();
+  
+    var tr = $(this).closest('tr');
+    tr.find('.table-start-date').attr('contenteditable','true');
+    tr.find('.table-end-date').attr('contenteditable','true');
+    tr.find('.table-hour-rate').attr('contenteditable','true');
+    tr.find('.table-assigned-hours').attr('contenteditable','true');
+    tr.find('.table-comment').attr('contenteditable','true');
+  
+    $(this).focus();
+  
+  
+    //Guardar los datos originales
+    tr.find('.table-start-date').attr('original_entry', $(this).html());
+    tr.find('.table-end-date').attr('original_entry', $(this).html());
+    tr.find('.table-hour-rate').attr('original_entry', $(this).html());
+    tr.find('.table-assigned-hours').attr('original_entry', $(this).html());
+    tr.find('.table-comment').attr('original_entry', $(this).html());
+  })
+  
+  $(document).on('click', '.button-ok', function () {
+    $(document).find('.button-edit').show();
+    $(document).find('.button-save').show();
+  
+    $(document).find('.button-ok').hide();
+    $(document).find('.button-cancel').hide();
+  
+    var tr = $(this).closest('tr');
+    tr.find('.table-start-date').attr('contenteditable','false');
+    tr.find('.table-end-date').attr('contenteditable','false');
+    tr.find('.table-hour-rate').attr('contenteditable','false');
+    tr.find('.table-assigned-hours').attr('contenteditable','false');
+    tr.find('.table-comment').attr('contenteditable','false');
+  
+    // TODO se debe habilitar el boton Save
+  
+    $(this).focus();
+  })
+  
+  $(document).on('click', '.button-cancel', function () {
+    $(document).find('.button-edit').show();
+    $(document).find('.button-save').show();
+    $(document).find('.button-ok').hide();
+    $(document).find('.button-cancel').hide();
+  
+    var tr = $(this).closest('tr');
+  
+    tr.find('.table-start-date').attr('contenteditable','false');
+    tr.find('.table-end-date').attr('contenteditable','false');
+    tr.find('.table-hour-rate').attr('contenteditable','false');
+    tr.find('.table-assigned-hours').attr('contenteditable','false');
+    tr.find('.table-comment').attr('contenteditable','false');
+  
+    $(this).focus();
+  
+  
+    // TODO debe eliminar lo que se ingreso o cambio si se presiona el boton Cancel
+    tr.find('.table-start-date').html($(this).attr('original_entry'));
+    tr.find('.table-end-date').html($(this).attr('original_entry'));
+    tr.find('.table-hour-rate').html($(this).attr('original_entry'));
+    tr.find('.table-assigned-hours').html($(this).attr('original_entry'));
+    tr.find('.table-comment').html($(this).attr('original_entry'));
+  })
+</script>
