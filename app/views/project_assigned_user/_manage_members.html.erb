@@ -31,8 +31,8 @@
         </tr>
       </thead>
       <% for empleado in @empleados %>
-        <tr>
-          <%= form_with(url: "proforma/update_project_assigned_user", method: "put", :html => { :onsubmit => "getContent()" }) do %>
+        <tr class="row-data">
+          <%= form_with(url: "proforma/update_project_assigned_user", method: "put") do %>
             <!-- PARAMS -->
             <!-- TODO buscar una manera de solo enviar los campos que fueron editados -->
             <td class="table-user-name">
@@ -67,20 +67,17 @@
     </tbody>
   </table>
 </div>
-<!-- Obtener contenido de los campos editables -->
-<script type="text/javascript">
-  function getContent(){
-    //var nuevoValor = $("#table-comment").text();
-    //$("#comment").val(nuevoValor);
-  }
-</script>
 <!-- Manejo del contenido editable de la tabla -->
 <script type="text/javascript">
   $(document).find('.button-ok').hide();
   $(document).find('.button-cancel').hide();
   
-  $(document).on('click', '.button-edit', function () {
+  $(document).on('click', '.button-edit', function (event) {
+    event.preventDefault();
+  
     var tr = $(this).closest('tr');
+    tr.css("background-color", "#ccc");
+  
     tr.find('.button-ok').show();
     tr.find('.button-cancel').show();
     tr.find('.button-edit').hide();
@@ -94,17 +91,20 @@
   
     $(this).focus();
   
+  
     //Guardar los datos originales
     //TODO no anda aun
-    //tr.find('.table-start-date').attr('original_entry', $(this).html());
-    //tr.find('.table-end-date').attr('original_entry', $(this).html());
-    //tr.find('.table-hour-rate').attr('original_entry', $(this).html());
-    //tr.find('.table-assigned-hours').attr('original_entry', $(this).html());
-    //tr.find('.table-comment').attr('original_entry', $(this).html());
+    tr.find('.row-data').each(function (index, val) {
+      $(this).attr('original-entry', $(this).html());
+    });
   })
   
-  $(document).on('click', '.button-ok', function () {
+  $(document).on('click', '.button-ok', function (event) {
+    event.preventDefault();
+  
     var tr = $(this).closest('tr');
+    tr.css("background-color", "white");
+  
     tr.find('.button-ok').hide();
     tr.find('.button-cancel').hide();
     tr.find('.button-edit').show();
@@ -120,8 +120,12 @@
     $(this).focus();
   })
   
-  $(document).on('click', '.button-cancel', function () {
+  $(document).on('click', '.button-cancel', function (event) {
+    event.preventDefault();
+  
     var tr = $(this).closest('tr');
+    tr.css("background-color", "white");
+  
     tr.find('.button-ok').hide();
     tr.find('.button-cancel').hide();
     tr.find('.button-edit').show();
@@ -135,11 +139,9 @@
   
     $(this).focus();
   
-    // TODO debe eliminar lo que se ingreso o cambio si se presiona el boton Cancel
-    //tr.find('.table-start-date').html($(this).attr('original_entry'));
-    //tr.find('.table-end-date').html($(this).attr('original_entry'));
-    //tr.find('.table-hour-rate').html($(this).attr('original_entry'));
-    //tr.find('.table-assigned-hours').html($(this).attr('original_entry'));
-    //tr.find('.table-comment').html($(this).attr('original_entry'));
+    // TODO debe eliminar lo que se ingreso o cambio
+    tr.find('.row-data').each(function (index, val) {
+      $(this).html( $(this).attr('original-entry') );
+    });
   })
 </script>

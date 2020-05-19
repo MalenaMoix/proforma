@@ -20,17 +20,23 @@ class ProformaController < ApplicationController
   end
 
   def update_project_assigned_user
-    username = params[:username]
-    startdate = params[:startdate]
-    enddate = params[:enddate]
-    hourrate = params[:hourrate]
-    hours = params[:hours]
+    user = params[:user]
+    startdate = params[:start_date]
+    enddate = params[:end_date]
+    hourrate = params[:hour_rate]
+    hours = params[:assigned_hours]
     comment = params[:comment]
+
+
+    # TODO ver como buscar al member
+    member_to_update = ProjectAssignedUser.where(:user => user).first
+
+
   end
 
 
 
-  # COMIENZO METODOS QUE YA ESTABNA EN PROFORMA
+  # COMIENZO METODOS QUE YA ESTABAN EN PROFORMA
 
   def index
     current = User.current
