@@ -4,8 +4,8 @@
     display: none;
     z-index: 1000;
     position: absolute;
-    border: 1px solid #CCC;
-    background: #628DB6;
+    border: 1px solid #ccc;
+    background: #628db6;
     padding: 5px;
     font-weight: bold;
     text-align: center;
@@ -23,7 +23,7 @@ textarea {
     top: 100%;
     margin-left: -5px;
     width: 0;
-    border-top: 8px solid #628DB6;
+    border-top: 8px solid #628db6;
     border-right: 5px solid transparent;
     border-left: 5px solid transparent;
     content: " ";
@@ -79,7 +79,7 @@ textarea {
     font-style: italic;
 }
 
-.proforma-plugin input[type=text] {
+.proforma-plugin input[type="text"] {
     text-align: center;
     font-size: 9pt;
     padding: 0 !important;
@@ -88,7 +88,7 @@ textarea {
 }
 
 @media (max-width: 1380px) {
-    .proforma-plugin input[type=text] {
+    .proforma-plugin input[type="text"] {
         font-size: 8.4pt;
     }
     .proforma-plugin td {
@@ -97,7 +97,7 @@ textarea {
 }
 
 @media (max-width: 1340px) {
-    .proforma-plugin input[type=text] {
+    .proforma-plugin input[type="text"] {
         font-size: 7pt;
     }
 }
@@ -121,8 +121,6 @@ textarea {
     border: none;
     background-color: transparent;
 }
-
-.proforma-plugin td.working {}
 
 .proforma-plugin td.non-working,
 .proforma-plugin td.activity-timeoff {
@@ -149,7 +147,7 @@ textarea {
         font-weight: normal;
         font-size: 11pt;
     }
-    .proforma-plugin input[type=submit] {
+    .proforma-plugin input[type="submit"] {
         display: none !important;
     }
     input[disabled] {
@@ -165,7 +163,6 @@ textarea {
         text-align: left;
         width: 160px !important;
     }
-    .proforma-plugin td.working {}
     .proforma-plugin td.non-working,
     .proforma-plugin td.activity-timeoff {
         background-color: #ccc;
@@ -265,7 +262,7 @@ table.holidays-table {
 }
 
 .manage-members span:after {
-    content: '\00bb';
+    content: "\00bb";
     position: absolute;
     opacity: 0;
     top: 0;
@@ -374,7 +371,7 @@ table.holidays-table {
     background: #f0f0f0;
 }
 
-.tab_container_wrap input {
+.tab_container_wrap input.tab {
     position: absolute;
     width: 0;
     height: 0;
@@ -390,25 +387,12 @@ table.holidays-table {
 .tab_content_box {
     background: #f0f0f0;
     padding: 20px;
+    width: fit-content;
     display: none;
-}
-
-.tab_content_box:nth-of-type(1) {
-    background: #f0f0f0;
-}
-
-.tab_content_box:nth-of-type(1) {
-    background: #f0f0f0;
 }
 
 .tab_content_box h2 {
     margin: 0 0 20px;
-}
-
-.input-modal {
-    width: 50%;
-    display: block;
-    margin: 15px auto;
 }
 
 .close {
@@ -457,6 +441,10 @@ table.holidays-table {
     font-size: 14px;
     color: white;
     background-color: #783d64;
+}
+
+.table-members th.rate {
+    width: 10px;
 }
 
 .table-members {
