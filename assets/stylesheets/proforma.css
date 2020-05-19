@@ -285,7 +285,7 @@ table.holidays-table {
 }
 
 
-/* MODALS */
+/* MODAL */
 
 * {
     box-sizing: border-box;
@@ -301,12 +301,12 @@ table.holidays-table {
     justify-content: center;
     align-items: center;
     display: none;
-    margin: 50px auto;
+    margin: 0;
 }
 
 .modal-content {
-    width: 1200px;
-    height: 600px;
+    width: 1400px;
+    height: 650px;
     background-color: white;
     border-radius: 4px;
     /*text-align: center;*/
@@ -319,92 +319,7 @@ table.holidays-table {
     align-items: center;
 }
 
-.modal {
-    width: 70%;
-    height: 70%;
-    background-color: rgba(0, 0, 0, 0.7);
-    position: absolute;
-    top: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    display: none;
-    margin: 50px auto;
-}
-
-.content {
-    width: 100px;
-    height: 100px;
-    background-color: white;
-    border-radius: 4px;
-    /*text-align: center;*/
-    padding: 20px;
-    position: relative;
-}
-
-.tab_triger ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-}
-
-.tab_triger ul li label {
-    position: relative;
-    display: block;
-    padding: 8px 15px;
-    cursor: pointer;
-    min-width: 100px;
-    background: #f0f0f0;
-    border-radius: 8px 8px 0 0;
-    text-align: center;
-    font-weight: bold;
-    font-family: arial;
-    font-size: 13px;
-}
-
-.tab_triger ul li:nth-child(1) label {
-    background: #f0f0f0;
-}
-
-.tab_triger ul li:nth-child(2) label {
-    background: #f0f0f0;
-}
-
-.tab_container_wrap input.tab {
-    position: absolute;
-    width: 0;
-    height: 0;
-    margin: 0;
-    z-index: -100;
-    top: -10000px;
-}
-
-.tab_container_wrap input:checked+.tab_content_box {
-    display: block;
-}
-
-.tab_content_box {
-    background: #f0f0f0;
-    padding: 20px;
-    width: fit-content;
-    display: none;
-}
-
-.tab_content_box h2 {
-    margin: 0 0 20px;
-}
-
 .close {
-    position: absolute;
-    top: 0;
-    right: 14px;
-    font-size: 30px;
-    transform: rotate(45deg);
-    cursor: pointer;
-}
-
-.close-modal {
     position: absolute;
     top: 0;
     right: 14px;
@@ -416,10 +331,25 @@ table.holidays-table {
 
 /* MODAL TABLE */
 
+.table-members th {
+    height: 30px;
+    padding: 10px;
+    text-align: left;
+    vertical-align: middle;
+    margin: 0px !important;
+    /*border: 1px solid grey;*/
+    border-collapse: collapse;
+    font-size: 14px;
+    color: white;
+    background-color: #783d64;
+    width: fit-content;
+}
+
 .table-members td {
     vertical-align: middle;
     text-align: left;
-    padding: 10px;
+    align-items: center;
+    padding: 5px;
     margin: 0;
     font-size: 13px;
     width: 30px;
@@ -429,22 +359,38 @@ table.holidays-table {
     border-collapse: collapse;
 }
 
-.table-members th {
+.table-members input[type="text"] {
+    width: 160px;
     height: 30px;
     padding: 10px;
-    text-align: left;
-    vertical-align: middle;
-    /*padding: 0px 2px !important;*/
-    margin: 0px !important;
-    /*border: 1px solid grey;*/
-    border-collapse: collapse;
-    font-size: 14px;
-    color: white;
-    background-color: #783d64;
 }
 
-.table-members th.rate {
-    width: 10px;
+.table-members input[class="hour_rate"] {
+    width: 80px;
+    height: 30px;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table-members input[class="start_date"] {
+    width: 100px;
+    height: 30px;
+    padding: 10px;
+}
+
+.table-members input[class="end_date"] {
+    width: 100px;
+    height: 30px;
+    padding: 10px;
+}
+
+.table-members input[class="assigned_hours"] {
+    width: 50px;
+    height: 30px;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .table-members {

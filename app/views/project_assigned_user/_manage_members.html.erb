@@ -1,3 +1,6 @@
+<div>
+  <h2 class="title-manage-members">Manage members</h2>
+</div>
 <!-- Stylesheet -->
 <% content_for :header_tags do %>
   <%= stylesheet_link_tag 'proforma', :plugin => 'proforma', media: 'all' %>
@@ -18,13 +21,13 @@
     <tbody class="content-members">
       <thead>
         <tr>
-          <th>Miembro</th>
-          <th>Fecha Inicio</th>
-          <th>Fecha Fin</th>
+          <th class="miembro">Miembro</th>
+          <th class="fechainicio">Fecha Inicio</th>
+          <th class="fechafin">Fecha Fin</th>
           <th class="rate">Rate</th>
-          <th>Horas asignadas</th>
-          <th>Comentario</th>
-          <th>Acci&oacute;n</th>
+          <th class="hours">Horas asignadas</th>
+          <th class="comentario">Comentario</th>
+          <th class="accion">Acci&oacute;n</th>
         </tr>
       </thead>
       <% for empleado in @empleados %>
@@ -33,27 +36,26 @@
             <!-- PARAMS -->
             <!-- TODO buscar una manera de solo enviar los campos que fueron editados -->
             <td class="table-user-name">
-              <input id="user" name="user" class="user" type="text" contenteditable="false" value="<%= empleado.user %>">
+              <input id="user" name="user" class="user" type="text" readonly value="<%= empleado.user %>">
             </td>
             <td class="table-start-date">
-              <input id="start_date" name="start_date" class="start_date" type="text" contenteditable="false" value="<%= empleado.start_date %>">
+              <input id="start_date" name="start_date" class="start_date" type="text" readonly value="<%= empleado.start_date %>">
             </td>
             <td class="table-end-date">
-              <input id="end_date" name="end_date" class="end_date" type="text" contenteditable="false" value="<%= empleado.end_date %>">
+              <input id="end_date" name="end_date" class="end_date" type="text" readonly value="<%= empleado.end_date %>">
             </td>
             <td class="table-hour-rate">
-              <input id="hour_rate" name="hour_rate" class="hour_rate" type="text" contenteditable="false" value="<%= empleado.hour_rate %>">
+              <input id="hour_rate" name="hour_rate" class="hour_rate" type="text" readonly value="<%= empleado.hour_rate %>">
             </td>
             <td class="table-assigned-hours">
-              <input id="assigned_hours" name="assigned_hours" class="assigned_hours" type="text" contenteditable="false" 
-                value="<%= empleado.assigned_hours %>">
+              <input id="assigned_hours" name="assigned_hours" class="assigned_hours" type="text" readonly value="<%= empleado.assigned_hours %>">
             </td>
             <td class="table-comment">
-              <input id="comment" name="comment" class="comment" type="text" contenteditable="false" value="<%= empleado.comment %>">
+              <input id="comment" name="comment" class="comment-members" type="text" readonly value="<%= empleado.comment %>">
             </td>
             <td class="table-buttons">
-              <button class="button-edit">Edit</button>
               <span>
+                <button class="button-edit">Edit</button>
                 <button class="button-ok">Ok</button>
                 <button class="button-cancel">Cancel</button>
                 <%= button_tag "Save", data: { confirm: "Are you sure?" }, class: "button-save" %>
@@ -84,26 +86,21 @@
     tr.find('.button-edit').hide();
     tr.find('.button-save').hide();
   
-    //tr.find('.table-start-date').attr('contenteditable','true');
-    //tr.find('.table-end-date').attr('contenteditable','true');
-    //tr.find('.table-hour-rate').attr('contenteditable','true');
-    //tr.find('.table-assigned-hours').attr('contenteditable','true');
-    //tr.find('.table-comment').attr('contenteditable','true');
+    tr.find('.start_date').removeAttr("readonly");
+    tr.find('.end_date').removeAttr("readonly");
+    tr.find('.hour_rate').removeAttr("readonly");
+    tr.find('.assigned_hours').removeAttr("readonly");
+    tr.find('.comment-members').removeAttr("readonly");
   
-    tr.find('.start_date').attr('contenteditable','true');
-    tr.find('.end_date').attr('contenteditable','true');
-    tr.find('.hour_rate').attr('contenteditable','true');
-    tr.find('.assigned_hours').attr('contenteditable','true');
-    tr.find('.comment').attr('contenteditable','true');
     $(this).focus();
   
     //Guardar los datos originales
     //TODO no anda aun
-    tr.find('.table-start-date').attr('original_entry', $(this).html());
-    tr.find('.table-end-date').attr('original_entry', $(this).html());
-    tr.find('.table-hour-rate').attr('original_entry', $(this).html());
-    tr.find('.table-assigned-hours').attr('original_entry', $(this).html());
-    tr.find('.table-comment').attr('original_entry', $(this).html());
+    //tr.find('.table-start-date').attr('original_entry', $(this).html());
+    //tr.find('.table-end-date').attr('original_entry', $(this).html());
+    //tr.find('.table-hour-rate').attr('original_entry', $(this).html());
+    //tr.find('.table-assigned-hours').attr('original_entry', $(this).html());
+    //tr.find('.table-comment').attr('original_entry', $(this).html());
   })
   
   $(document).on('click', '.button-ok', function () {
@@ -113,11 +110,11 @@
     tr.find('.button-edit').show();
     tr.find('.button-save').show();
   
-    tr.find('.start_date').attr('contenteditable','false');
-    tr.find('.end_date').attr('contenteditable','false');
-    tr.find('.hour_rate').attr('contenteditable','false');
-    tr.find('.assigned_hours').attr('contenteditable','false');
-    tr.find('.comment').attr('contenteditable','false');
+    tr.find('.start_date').attr("readonly", true);
+    tr.find('.end_date').attr("readonly", true);
+    tr.find('.hour_rate').attr("readonly", true);
+    tr.find('.assigned_hours').attr("readonly", true);
+    tr.find('.comment-members').attr("readonly", true);
   
     // TODO se debe habilitar el boton Save
     $(this).focus();
@@ -130,19 +127,19 @@
     tr.find('.button-edit').show();
     tr.find('.button-save').show();
   
-    tr.find('.start_date').attr('contenteditable','false');
-    tr.find('.end_date').attr('contenteditable','false');
-    tr.find('.hour_rate').attr('contenteditable','false');
-    tr.find('.assigned_hours').attr('contenteditable','false');
-    tr.find('.comment').attr('contenteditable','false');
+    tr.find('.start_date').attr("readonly", true);
+    tr.find('.end_date').attr("readonly", true);
+    tr.find('.hour_rate').attr("readonly", true);
+    tr.find('.assigned_hours').attr("readonly", true);
+    tr.find('.comment-members').attr("readonly", true);
   
     $(this).focus();
   
     // TODO debe eliminar lo que se ingreso o cambio si se presiona el boton Cancel
-    tr.find('.table-start-date').html($(this).attr('original_entry'));
-    tr.find('.table-end-date').html($(this).attr('original_entry'));
-    tr.find('.table-hour-rate').html($(this).attr('original_entry'));
-    tr.find('.table-assigned-hours').html($(this).attr('original_entry'));
-    tr.find('.table-comment').html($(this).attr('original_entry'));
+    //tr.find('.table-start-date').html($(this).attr('original_entry'));
+    //tr.find('.table-end-date').html($(this).attr('original_entry'));
+    //tr.find('.table-hour-rate').html($(this).attr('original_entry'));
+    //tr.find('.table-assigned-hours').html($(this).attr('original_entry'));
+    //tr.find('.table-comment').html($(this).attr('original_entry'));
   })
 </script>

@@ -462,16 +462,8 @@
             <!-- Modal content-->
             <div class="modal-content" style="overflow-x:auto;">
               <div class="close">+</div>
-              <div class="tab_triger">
-                <ul>
-                  <li><label for="tab1">Manage members</label></li>
-                </ul>
-              </div>
-              <div class="tab_container_wrap">
-                <input class="tab" type="radio" checked id="tab1" name="1">
-                <div class="tab_content_box">
-                  <%= render :partial => 'project_assigned_user/manage_members' %>
-                </div>
+              <div class="partial">
+                <%= render :partial => 'project_assigned_user/manage_members' %>
               </div>
             </div>
           </div>
