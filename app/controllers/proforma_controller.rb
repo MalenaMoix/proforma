@@ -20,6 +20,9 @@ class ProformaController < ApplicationController
   end
 
   def update_project_assigned_user
+
+    project_id = params[:project_id]
+
     user = params[:user]
     startdate = params[:start_date]
     enddate = params[:end_date]
@@ -27,11 +30,36 @@ class ProformaController < ApplicationController
     hours = params[:assigned_hours]
     comment = params[:comment]
 
+    
+    # OPTIMIZE
+    delimitador = " "
+    nombre_apellido = user.split(delimitador)
+    user_encontrado = User.where(:firstname => nombre_apellido[0], :lastname => nombre_apellido[1]).first
 
-    # TODO ver como buscar al member
-    member_to_update = ProjectAssignedUser.where(:user => user).first
+    
+    employee_to_update = ProjectAssignedUser.where(:project_id => project_id, :user_id => user_encontrado[:id]).first
 
+    if (startdate)
+      employee_to_update.start_date = startdate
+    end
 
+    if (enddate)
+      employee_to_update.end_date = enddate
+    end
+
+    if (hourrate)
+      employee_to_update.hour_rate = hourrate
+    end
+
+    if (hours)
+      employee_to_update.assigned_hours = hours
+    end
+
+    if (comment)
+      employee_to_update.comment = comment
+    end
+
+    employee_to_update.save
   end
 
 
@@ -409,7 +437,7 @@ class ProformaController < ApplicationController
 
     @members = Member.where(:project_id => @project[:id])
     @users = User.all
-    @empleados = ProjectAssignedUser.all
+    @empleados = ProjectAssignedUser.where(:project_id => @project[:id])
 
 
 

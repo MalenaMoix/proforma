@@ -33,6 +33,7 @@
       <% for empleado in @empleados %>
         <tr class="row-data">
           <%= form_with(url: "proforma/update_project_assigned_user", method: "put") do %>
+            <%= hidden_field_tag(:project_id, @project[:id]) %>
             <!-- PARAMS -->
             <!-- TODO buscar una manera de solo enviar los campos que fueron editados -->
             <td class="table-user-name">
