@@ -1,35 +1,33 @@
 <table>
-<tbody>
-<tr>
-  <th>Feriados</th>
-  <td>
-    <label for="datepicker"></label>
-    <input type="text" id="datepicker">
-    <input type="hidden" id="feriados"/>
-  </td>
-</tr>
-<tr>
-  <th>Bloquear proformas hasta
-  </th>
-  <td>
-    <hr/>
-
-  </td>
-</tr>
-<% Project.all.each do |p| %>
+  <tbody>
     <tr>
-      <th>
-        <%= p.name %>
-      </th>
+      <th>Feriados</th>
       <td>
-        <input type="text" name="pickers" value="<%= settings['block_'+ p.id.to_s+''] %>" id="<%= p.id.to_s %>"/>
+        <label for="datepicker"></label>
+        <input type="text" id="datepicker">
+        <input type="hidden" id="feriados"/>
       </td>
     </tr>
-<% end %>
-</tbody>
+    <tr>
+      <th>Bloquear proformas hasta
+      </th>
+      <td>
+        <hr/>
+      </td>
+    </tr>
+    <% Project.all.each do |p| %>
+      <tr>
+        <th>
+          <%= p.name %>
+        </th>
+        <td>
+          <input type="text" name="pickers" value="<%= settings['block_'+ p.id.to_s+''] %>" id="<%= p.id.to_s %>"/>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
 </table>
 <% string = 'feriados' %>
-
 <script>
   var $name = $('[name=pickers]');
   $name.datepicker({dateFormat:'yy-mm-dd'});
@@ -41,24 +39,24 @@
   <%split_settings.each do |a| %>
   dates.push('<%= a %>');
   <% end %>
-
-
-
+  
+  
+  
   var $feriados = $("#feriados");
   $feriados.attr("name", "settings[feriados]");
   $feriados.val('<%=settings[string] %>');
-
+  
   $("#datepicker").datepicker(getOptionsForDatepicker());
-
+  
   function addDate(date) {
       if (jQuery.inArray(date, dates) < 0)
           dates.push(date);
   }
-
+  
   function removeDate(index) {
       dates.splice(index, 1);
   }
-
+  
   // Adds a date if we don't have it yet, else remove it
   function addOrRemoveDate(date) {
       var index = jQuery.inArray(date, dates);
@@ -67,7 +65,7 @@
       else
           addDate(date);
   }
-
+  
   // Takes a 1-digit number and inserts a zero before it
   function padNumber(number) {
       var ret = String(number);
@@ -75,10 +73,10 @@
           ret = "0" + ret;
       return ret;
   }
-
-
-
-
+  
+  
+  
+  
   function getOptionsForDatepicker() {
       var currentTime = new Date();
       var currentYear = currentTime.getFullYear();
@@ -98,7 +96,7 @@
               var day = padNumber(date.getDate());
               // This depends on the datepicker's date format
               var dateString = year + '-' + month + "-" + day;
-
+  
               var gotDate = jQuery.inArray(dateString, dates);
               if (gotDate >= 0) {
                   // Enable date so it can be deselected. Set style to be highlighted

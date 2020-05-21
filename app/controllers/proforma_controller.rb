@@ -14,22 +14,21 @@ class ProformaController < ApplicationController
 
     @employee = ProjectAssignedUser.new(:project_id => project_id, :user_id => user_selected[:id])
     @employee.save
+    
 
     # TODO refrescar la pantalla cuando se agrega nuevo miembro o que aparezca directamente en la tabla
     #render :partial => 'project_assigned_user/manage_members'
   end
 
+  
   def update_project_assigned_user
-
     project_id = params[:project_id]
-
     user = params[:user]
     startdate = params[:start_date]
     enddate = params[:end_date]
     hourrate = params[:hour_rate]
     hours = params[:assigned_hours]
     comment = params[:comment]
-
     
     # OPTIMIZE
     delimitador = " "
@@ -39,28 +38,43 @@ class ProformaController < ApplicationController
     
     employee_to_update = ProjectAssignedUser.where(:project_id => project_id, :user_id => user_encontrado[:id]).first
 
-    if (startdate)
-      employee_to_update.start_date = startdate
-    end
-
-    if (enddate)
-      employee_to_update.end_date = enddate
-    end
-
-    if (hourrate)
-      employee_to_update.hour_rate = hourrate
-    end
-
-    if (hours)
-      employee_to_update.assigned_hours = hours
-    end
-
-    if (comment)
-      employee_to_update.comment = comment
-    end
+    employee_to_update.start_date = startdate
+    employee_to_update.end_date = enddate
+    employee_to_update.hour_rate = hourrate
+    employee_to_update.assigned_hours = hours
+    employee_to_update.comment = comment
 
     employee_to_update.save
   end
+
+
+  def delete_project_assigned_user
+
+    puts "ENTRA AL METODO DELETE"
+
+    #@project_id = Project.find(params[:project_id])
+    # Eliminar completamente porque se puede agregar un miembro por confusion y se lo quiere sacar
+    #project_id = params[:project_id]
+    #user = params[:user]
+
+    # OPTIMIZE
+    #delimitador = " "
+    #nombre_apellido = user.split(delimitador)
+    #user_encontrado = User.where(:firstname => nombre_apellido[0], :lastname => nombre_apellido[1]).first
+
+    #ProjectAssignedUser.destroy(user_encontrado[:id])
+  end
+
+  
+  def set_end_date_project_assigned_user
+    # No se si esto trabajarlo asi a parte o haciendolo en el update ya esta
+    # Y que pasa con ese miembro al que se le puso end_date?
+    # Deberia seguir apareciendo en la tabla? O solo apareceria en la tabla de Facturacion? Creo que esta ultima opcion la veo corecta
+  end
+
+
+
+
 
 
 

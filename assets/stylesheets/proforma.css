@@ -337,7 +337,6 @@ table.holidays-table {
     text-align: left;
     vertical-align: middle;
     margin: 0px !important;
-    /*border: 1px solid grey;*/
     border-collapse: collapse;
     font-size: 14px;
     color: white;
@@ -355,8 +354,13 @@ table.holidays-table {
     width: 30px;
     margin: 0px !important;
     height: 18px;
-    border-top: 1px solid gray;
+    border-top: 1px solid lightgrey;
     border-collapse: collapse;
+}
+
+.table-members input {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .table-members input[type="text"] {
@@ -398,8 +402,35 @@ table.holidays-table {
     width: 100%;
     padding: 0;
     font-family: arial;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.miembro {
+    border-top-left-radius: 8px;
+}
+
+.accion {
+    border-top-right-radius: 8px;
 }
 
 .label-users {
     font-size: 12px;
+}
+
+.table-footer {
+    height: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    font-family: sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    color: #783d64;
+}
+
+.title-manage-members {
+    font-family: sans-serif;
+    font-size: 18px;
+    font-weight: bold;
 }

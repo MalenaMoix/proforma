@@ -1,4 +1,7 @@
-1) En la tabla manage members: cuando se hace click en algun edit pero se hace el save de otra celda, en realidad se esta  mandando el save de la celda en la cual se hizo click a edit.
+1) En la tabla manage members: cuando se hace click en algun edit pero se hace el save de otra celda, en realidad se esta  mandando el save de la celda en la cual se hizo click a edit. (CREO QUE YA NO PASA)
 
 2) Chequear los TODO y OPTIMIZE comentados
 
+3) Cuando se agrega un miembro que se agregue automaticamente a la tabla. Actualmente hay que refrescar la pantalla.
+
+4) 

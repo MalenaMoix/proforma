@@ -1,5 +1,5 @@
 <div>
-  <h2 class="title-manage-members">Manage members</h2>
+  <h2 class="title-manage-members"> Manage members </h2>
 </div>
 <!-- Stylesheet -->
 <% content_for :header_tags do %>
@@ -11,7 +11,7 @@
     <%= hidden_field_tag(:project_id, @project[:id]) %>
     <label class="label-users" for="users">Agregar nuevo miembro al proyecto:</label>
     <%= select_tag(:user_id, options_for_select(@users_map)) %>
-    <span> <%= button_tag "Add", :action => 'new_project_assigned_user' %> </span>
+    <span> <%= button_tag "Add", :action => 'new_project_assigned_user', class: "button-add" %> </span>
   <% end %>
 </div>
 <br/>
@@ -32,10 +32,8 @@
       </thead>
       <% for empleado in @empleados %>
         <tr class="row-data">
-          <%= form_with(url: "proforma/update_project_assigned_user", method: "put") do %>
+          <%= form_with(url: "proforma/update_project_assigned_user", method: "put") do |f| %>
             <%= hidden_field_tag(:project_id, @project[:id]) %>
-            <!-- PARAMS -->
-            <!-- TODO buscar una manera de solo enviar los campos que fueron editados -->
             <td class="table-user-name">
               <input id="user" name="user" class="user" type="text" readonly value="<%= empleado.user %>">
             </td>
@@ -56,9 +54,11 @@
             </td>
             <td class="table-buttons">
               <span>
-                <button class="button-edit">Edit</button>
-                <button class="button-ok">Ok</button>
-                <button class="button-cancel">Cancel</button>
+                <button class="button-edit"> Edit </button>
+                <button class="button-ok"> Ok </button>
+                <button class="button-cancel"> Cancel </button>
+                <!-- <%= link_to "Delete", "proforma/delete_project_assigned_user", method: :delete, class: "button-delete", data: { confirm: "Are you sure?" } %> -->
+                <%= button_tag "Delete", data: { confirm: "Are you sure?" }, class: "button-delete" %>
                 <%= button_tag "Save", data: { confirm: "Are you sure?" }, class: "button-save" %>
               </span>
             </td>
@@ -67,20 +67,35 @@
       <% end %>
     </tbody>
   </table>
+  <br/>
+  <br/>
+  <div class="table-footer">
+    Miembros del <%= @project %>
+  </div>
 </div>
 <!-- Manejo del contenido editable de la tabla -->
 <script type="text/javascript">
   $(document).find('.button-ok').hide();
   $(document).find('.button-cancel').hide();
+  $(document).find('.button-delete').hide();
+  
+  //TODO Actualmente se elimina correctamente de la tabla, pero falta eliminarlo de la BD
+  
+  $(document).on('click', '.button-delete', function () {
+    $(this).parents('tr').remove();
+  })
+  
   
   $(document).on('click', '.button-edit', function (event) {
     event.preventDefault();
   
     var tr = $(this).closest('tr');
     tr.css("background-color", "#ccc");
+    tr.find('.user').css("background-color", "#e9e9e9");
   
     tr.find('.button-ok').show();
     tr.find('.button-cancel').show();
+    tr.find('.button-delete').show();
     tr.find('.button-edit').hide();
     tr.find('.button-save').hide();
   
@@ -105,9 +120,11 @@
   
     var tr = $(this).closest('tr');
     tr.css("background-color", "white");
+    tr.find('.user').css("background-color", "white");
   
     tr.find('.button-ok').hide();
     tr.find('.button-cancel').hide();
+    tr.find('.button-delete').hide();
     tr.find('.button-edit').show();
     tr.find('.button-save').show();
   
@@ -126,9 +143,11 @@
   
     var tr = $(this).closest('tr');
     tr.css("background-color", "white");
+    tr.find('.user').css("background-color", "white");
   
     tr.find('.button-ok').hide();
     tr.find('.button-cancel').hide();
+    tr.find('.button-delete').hide();
     tr.find('.button-edit').show();
     tr.find('.button-save').show();
   
