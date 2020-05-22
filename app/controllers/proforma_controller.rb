@@ -12,13 +12,16 @@ class ProformaController < ApplicationController
     id_user_selected = params[:user_id]
     user_selected = User.where(:id => id_user_selected).first
 
-    @employee = ProjectAssignedUser.new(:project_id => project_id, :user_id => user_selected[:id])
+    # Primer dia del mes actual
+    fecha_comienzo_por_defecto = Date.today.at_beginning_of_month
+
+    @employee = ProjectAssignedUser.new(:project_id => project_id, :user_id => user_selected[:id], :hour_rate => 0.0, :assigned_hours => 8, :start_date => fecha_comienzo_por_defecto)
 
     if @employee.save
       flash.notice = "Miembro agregado al proyecto"
       redirect_to :back
     else
-      flash.notice = "Error al agregar miembro al proyecto"
+      flash.alert = "Error al agregar miembro al proyecto"
     end
   end
 
@@ -46,7 +49,12 @@ class ProformaController < ApplicationController
     employee_to_update.assigned_hours = hours
     employee_to_update.comment = comment
 
-    employee_to_update.save
+    if employee_to_update.save
+      flash.notice = "Se agregaron los datos"
+      redirect_to :back
+    else
+      flash.alert = "Se produjo un error al intentar agregar los datos"
+    end
   end
 
 
@@ -64,13 +72,6 @@ class ProformaController < ApplicationController
     #user_encontrado = User.where(:firstname => nombre_apellido[0], :lastname => nombre_apellido[1]).first
 
     #ProjectAssignedUser.destroy(user_encontrado[:id])
-  end
-
-  
-  def set_end_date_project_assigned_user
-    # No se si esto trabajarlo asi a parte o haciendolo en el update ya esta
-    # Y que pasa con ese miembro al que se le puso end_date?
-    # Deberia seguir apareciendo en la tabla? O solo apareceria en la tabla de Facturacion? Creo que esta ultima opcion la veo corecta
   end
 
 
@@ -478,6 +479,6 @@ class ProformaController < ApplicationController
     @users_no_members = User.where(:id => @ids)
 
     # Se usa este map para el select tag en manage members
-    @users_map = @users_no_members.map {|user| [user.firstname + " " + user.lastname, user.id]}
+    @users_map = @users_no_members.map {|user| [user.lastname + " " + user.firstname, user.id]}
   end
 end

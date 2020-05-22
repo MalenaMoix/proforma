@@ -1,0 +1,36 @@
+Cuando entras a proforma acordarse de tener el rol "Activo"
+
+
+// FIXME En la tabla manage members: cuando se hace click en algun edit pero se hace el save de otra celda, en realidad se esta  mandando el save de la celda en la cual se hizo click a edit. (CREO QUE YA NO PASA) (CORROBORAR)
+
+// FIXME Chequear los TODO y OPTIMIZE comentados
+
+
+
+
+PRIMERA DEMO
+
+// DONE En el select box insertar los usuarios con apellido nombre. Actualmente esta con nombre apellido.
+// DONE Ordenarlos alfabeticamente.
+
+// DONE Por defecto cuando agregue un miembro que se haga con:
+    - Horas asignadas: 8
+    - Rate: 0
+    - Fecha inicio: primer dia del mes actual
+
+// DONE El boton Ok que ya sea el Save
+
+// DONE Si esta en Check:
+    // DONE Se puede modificar el Total y el Log
+    // DONE Por el momento si no se toma una screenshoot o algo, eso se va a perder
+
+
+// TODO En la tabla manage members solo mostrar los miembros que no tienen end_date, o cuyo end_date sea mayor o igual al mes actual
+
+// TODO Si el campo Editable no esta en check:
+    // TODO Calcular en UI el total, haciendo rate*horasTrabajadas
+    // TODO Para calcular las horas trabajadas hacerlo en el BACK: seria un join entre las tablas User y Time Entry
+
+
+
+(POR AHORA ESTO NO) El guardar de la facturacion debe guardar: el id de la persona, el log, la fecha en que se hizo, total
