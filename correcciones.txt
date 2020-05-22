@@ -2,6 +2,3 @@
 
 2) Chequear los TODO y OPTIMIZE comentados
 
-3) Cuando se agrega un miembro que se agregue automaticamente a la tabla. Actualmente hay que refrescar la pantalla.
-
-4) 

@@ -36,10 +36,9 @@
   });
   var dates = [];
   <% split_settings = settings[string] ? settings[string].split(',') : [] %>
-  <%split_settings.each do |a| %>
+  <% split_settings.each do |a| %>
   dates.push('<%= a %>');
   <% end %>
-  
   
   
   var $feriados = $("#feriados");
@@ -73,8 +72,6 @@
           ret = "0" + ret;
       return ret;
   }
-  
-  
   
   
   function getOptionsForDatepicker() {

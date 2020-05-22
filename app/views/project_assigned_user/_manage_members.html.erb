@@ -9,9 +9,10 @@
 <div class="select-user">
   <%= form_with do %>
     <%= hidden_field_tag(:project_id, @project[:id]) %>
-    <label class="label-users" for="users">Agregar nuevo miembro al proyecto:</label>
+    <label class="label-users" for="users"> Agregar nuevo miembro al proyecto: </label>
     <%= select_tag(:user_id, options_for_select(@users_map)) %>
-    <span> <%= button_tag "Add", :action => 'new_project_assigned_user', class: "button-add" %> </span>
+    <span> <%= button_tag "Add", :action => 'new_project_assigned_user', data: { confirm: "Agregar este usuario como miembro del proyecto?" }, 
+    class: "button-add" %> </span>
   <% end %>
 </div>
 <br/>
@@ -58,8 +59,8 @@
                 <button class="button-ok"> Ok </button>
                 <button class="button-cancel"> Cancel </button>
                 <!-- <%= link_to "Delete", "proforma/delete_project_assigned_user", method: :delete, class: "button-delete", data: { confirm: "Are you sure?" } %> -->
-                <%= button_tag "Delete", data: { confirm: "Are you sure?" }, class: "button-delete" %>
-                <%= button_tag "Save", data: { confirm: "Are you sure?" }, class: "button-save" %>
+                <%= button_tag "Delete", data: { confirm: "Desea eliminar este miembro del proyecto?" }, class: "button-delete" %>
+                <%= button_tag "Save", data: { confirm: "Desea guardar los cambios realizados?" }, class: "button-save" %>
               </span>
             </td>
           <% end %>
@@ -89,8 +90,11 @@
     event.preventDefault();
   
     var tr = $(this).closest('tr');
-    tr.css("background-color", "#ccc");
-    tr.find('.user').css("background-color", "#e9e9e9");
+    tr.css("background-color", "#f0f0f0");
+    tr.find('input').css("border", "1px solid #862a5c");
+    tr.find('input').css("background-color", "white");
+    tr.find('.user').css("background-color", "transparent");
+    tr.find('.user').css("border", "none");
   
     tr.find('.button-ok').show();
     tr.find('.button-cancel').show();
@@ -116,7 +120,8 @@
   
     var tr = $(this).closest('tr');
     tr.css("background-color", "#f9f9f9");
-    tr.find('.user').css("background-color", "white");
+    tr.find('input').css("border", "none");
+    tr.find('input').css("background-color", "transparent");
   
     tr.find('.button-ok').hide();
     tr.find('.button-cancel').hide();
@@ -144,7 +149,8 @@
     });
   
     tr.css("background-color", "#f9f9f9");
-    tr.find('.user').css("background-color", "white");
+    tr.find('input').css("border", "none");
+    tr.find('input').css("background-color", "transparent");
   
     tr.find('.button-ok').hide();
     tr.find('.button-cancel').hide();
@@ -161,3 +167,27 @@
     $(this).focus();
   })
 </script>
+<!-- <script>
+  $(document).ready(function () {
+      //Se ejecuta cuando se ingresa a la pantalla
+      <% @proformas.each do |p| %>
+        computeTotal('<%= p[:id] %>');
+        console.log("HOLA");
+      <% end %>
+  });
+  
+  
+  function computeTotal(name) {
+    var total = 0;
+    var $2 = $("input[group='" + name + "']");
+    $2.each(function () {
+      var number = parseFloat($(this).val());
+      total += isNaN(number) ? 0 : number;
+    });
+  
+    $('#' + name).text(total.toFixed(2));
+    var value = $2.parents('td.working').length * 8;
+    $('#extra_' + name).text((total - value).toFixed(2));
+    $('#working_' + name).text(value.toFixed(2));
+  }
+</script> -->

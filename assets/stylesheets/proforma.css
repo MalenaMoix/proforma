@@ -361,6 +361,8 @@ table.holidays-table {
 .table-members input {
     margin-top: 5px;
     margin-bottom: 5px;
+    border: none;
+    background-color: transparent;
 }
 
 .table-members input[type="text"] {
@@ -373,7 +375,6 @@ table.holidays-table {
     width: 80px;
     height: 30px;
     padding: 10px;
-    text-align: center;
     vertical-align: middle;
 }
 
@@ -393,7 +394,7 @@ table.holidays-table {
     width: 50px;
     height: 30px;
     padding: 10px;
-    text-align: center;
+    text-align: right;
     vertical-align: middle;
 }
 
@@ -404,6 +405,10 @@ table.holidays-table {
     font-family: arial;
     background-color: #f9f9f9;
     border-radius: 8px;
+}
+
+.user {
+    font-weight: bold;
 }
 
 .miembro {

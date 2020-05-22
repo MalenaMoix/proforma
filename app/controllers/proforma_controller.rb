@@ -13,11 +13,13 @@ class ProformaController < ApplicationController
     user_selected = User.where(:id => id_user_selected).first
 
     @employee = ProjectAssignedUser.new(:project_id => project_id, :user_id => user_selected[:id])
-    @employee.save
-    
 
-    # TODO refrescar la pantalla cuando se agrega nuevo miembro o que aparezca directamente en la tabla
-    #render :partial => 'project_assigned_user/manage_members'
+    if @employee.save
+      flash.notice = "Miembro agregado al proyecto"
+      redirect_to :back
+    else
+      flash.notice = "Error al agregar miembro al proyecto"
+    end
   end
 
   
@@ -49,7 +51,6 @@ class ProformaController < ApplicationController
 
 
   def delete_project_assigned_user
-
     puts "ENTRA AL METODO DELETE"
 
     #@project_id = Project.find(params[:project_id])
@@ -452,6 +453,10 @@ class ProformaController < ApplicationController
     @members = Member.where(:project_id => @project[:id])
     @users = User.all
     @empleados = ProjectAssignedUser.where(:project_id => @project[:id])
+
+
+    current = User.current
+    @proformas = [current]
 
 
 
