@@ -32,7 +32,7 @@
       </thead>
       <% for empleado in @empleados %>
         <tr class="row-data">
-          <%= form_with(url: "proforma/update_project_assigned_user", method: "put") do |f| %>
+          <%= form_with(url: "proforma/update_project_assigned_user", method: "put") do %>
             <%= hidden_field_tag(:project_id, @project[:id]) %>
             <td class="table-user-name">
               <input id="user" name="user" class="user" type="text" readonly value="<%= empleado.user %>">
@@ -80,7 +80,6 @@
   $(document).find('.button-delete').hide();
   
   //TODO Actualmente se elimina correctamente de la tabla, pero falta eliminarlo de la BD
-  
   $(document).on('click', '.button-delete', function () {
     $(this).parents('tr').remove();
   })
@@ -107,10 +106,7 @@
   
     $(this).focus();
   
-  
-    //Guardar los datos originales
-    //TODO no anda aun
-    tr.find('.row-data').each(function (index, val) {
+    tr.each(function (index, val) {
       $(this).attr('original-entry', $(this).html());
     });
   })
@@ -119,7 +115,7 @@
     event.preventDefault();
   
     var tr = $(this).closest('tr');
-    tr.css("background-color", "white");
+    tr.css("background-color", "#f9f9f9");
     tr.find('.user').css("background-color", "white");
   
     tr.find('.button-ok').hide();
@@ -142,7 +138,12 @@
     event.preventDefault();
   
     var tr = $(this).closest('tr');
-    tr.css("background-color", "white");
+  
+    tr.each(function (index, val) {
+      $(this).html( $(this).attr('original-entry') );
+    });
+  
+    tr.css("background-color", "#f9f9f9");
     tr.find('.user').css("background-color", "white");
   
     tr.find('.button-ok').hide();
@@ -158,10 +159,5 @@
     tr.find('.comment-members').attr("readonly", true);
   
     $(this).focus();
-  
-    // TODO debe eliminar lo que se ingreso o cambio
-    tr.find('.row-data').each(function (index, val) {
-      $(this).html( $(this).attr('original-entry') );
-    });
   })
 </script>

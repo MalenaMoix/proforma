@@ -1,4 +1,4 @@
-1) En la tabla manage members: cuando se hace click en algun edit pero se hace el save de otra celda, en realidad se esta  mandando el save de la celda en la cual se hizo click a edit. (CREO QUE YA NO PASA)
+1) En la tabla manage members: cuando se hace click en algun edit pero se hace el save de otra celda, en realidad se esta  mandando el save de la celda en la cual se hizo click a edit. (CREO QUE YA NO PASA) (CORROBORAR)
 
 2) Chequear los TODO y OPTIMIZE comentados
 
