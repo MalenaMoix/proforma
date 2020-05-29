@@ -452,15 +452,35 @@ class ProformaController < ApplicationController
     @project = Project.find(params[:project_id])
 
     @members = Member.where(:project_id => @project[:id])
-    @users = User.all
-    @empleados = ProjectAssignedUser.where(:project_id => @project[:id])
-
 
     current = User.current
     @proformas = [current]
 
 
 
+
+    @users = User.all
+    @empleados = ProjectAssignedUser.where(:project_id => @project[:id])
+    @todos = []
+
+    @empleados.each_with_index do |emp, index|
+
+      if !emp.end_date
+        @todos.push(emp)
+      end
+      
+      if emp.end_date
+        # TODO no comparar con el ahora, ver si es que hay que buscar en el selected box de los meses
+        if emp.end_date.month >= DateTime.now.month
+          @todos.push(emp)
+        end
+      end
+    end
+
+    #@empleados_prueba = ProjectAssignedUser.where(:end_date => "2020-06-30").delete_all
+
+    
+    
     # OPTIMIZE
     # Tal vez se pueda meter esto en un metodo o hacerlo de otra forma
     # IDs de todos los User

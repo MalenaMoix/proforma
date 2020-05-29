@@ -297,6 +297,9 @@ table.holidays-table {
     background-color: rgba(0, 0, 0, 0.7);
     position: absolute;
     top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -309,7 +312,6 @@ table.holidays-table {
     height: 650px;
     background-color: white;
     border-radius: 4px;
-    /*text-align: center;*/
     padding: 20px;
     position: relative;
 }
@@ -365,16 +367,19 @@ table.holidays-table {
     background-color: transparent;
 }
 
-.table-members input[type="text"] {
+.table-members input[class="user"] {
     width: 160px;
     height: 30px;
     padding: 10px;
+    text-align: left;
+    vertical-align: middle;
 }
 
 .table-members input[class="hour_rate"] {
-    width: 80px;
+    width: 60px;
     height: 30px;
     padding: 10px;
+    text-align: left;
     vertical-align: middle;
 }
 
@@ -391,7 +396,7 @@ table.holidays-table {
 }
 
 .table-members input[class="assigned_hours"] {
-    width: 50px;
+    width: 45px;
     height: 30px;
     padding: 10px;
     text-align: right;
@@ -432,3 +437,87 @@ table.holidays-table {
     font-size: 18px;
     font-weight: bold;
 }
+
+
+/* TABLA historial de miembros*/
+
+.table-historic-members {
+    border-collapse: collapse;
+    width: 40%;
+    padding: 0;
+    font-family: arial;
+    background-color: #f3f3f3;
+    border-radius: 5px 5px 0 0;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.table-historic-members th {
+    height: 30px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: left;
+    vertical-align: middle;
+    border-collapse: collapse;
+    font-size: 14px;
+    color: white;
+    background-color: #a3a3a3;
+    width: fit-content;
+}
+
+.table-historic-members td {
+    vertical-align: middle;
+    text-align: left;
+    padding: 5px;
+    margin: 0;
+    font-size: 13px;
+    width: 30px;
+    height: 18px;
+    border-collapse: collapse;
+}
+
+.historic-member {
+    padding-left: 10px;
+}
+
+.table-historic-members tbody tr:last-of-type {
+    border-bottom: 2px solid #a3a3a3;
+}
+
+.table-historic-members tbody tr:nth-of-type(even) {
+    background-color: #f9f9f9;
+}
+
+.table-historic-members tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.button-show-historic-table {
+    border-radius: 5px;
+    height: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: #cccccc;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+    margin-left: 5px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+}
+
+.button-hide-historic-table {
+    border-radius: 5px;
+    height: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: #cc6363;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 12px;
+    margin-left: 5px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+}
+
+.show-historic-table button:hover {}

@@ -1,6 +1,6 @@
 Cuando entras a proforma acordarse de tener el rol "Activo"
 
-// FIXME En la tabla manage members: cuando se hace click en algun edit pero se hace el save de otra celda, en realidad se esta  mandando el save de la celda en la cual se hizo click a edit. (CREO QUE YA NO PASA) (CORROBORAR)
+// FIXME En la tabla manage members: luego de hacer click en Cancel, y en esa misma row pongo Save, no se esta guardando
 
 // FIXME Chequear los TODO y OPTIMIZE comentados
 
@@ -36,4 +36,4 @@ PRIMERA DEMO
 
 // FIXME Validar todos los campos de datos que pueda ingresar el usuario
 
-// TODO Hacer responsive las tablas
+// DONE Hacer responsive las tablas (no hice nada creo que ya anda bien)
