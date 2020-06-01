@@ -1,9 +1,7 @@
 Cuando entras a proforma acordarse de tener el rol "Activo"
 
 // FIXME En la tabla manage members: luego de hacer click en Cancel, y en esa misma row pongo Save, no se esta guardando
-
 // FIXME Chequear los TODO y OPTIMIZE comentados
-
 
 
 
@@ -24,7 +22,7 @@ PRIMERA DEMO
     // DONE Por el momento si no se toma una screenshoot o algo, eso se va a perder
 
 
-// TODO En la tabla manage members solo mostrar los miembros que no tienen end_date, o cuyo end_date sea mayor o igual al mes actual
+// DONE En la tabla manage members solo mostrar los miembros que no tienen end_date, o cuyo end_date sea mayor o igual al mes actual
 
 // DONE Si el campo Editable no esta en check:
     // DONE Calcular en UI el total, haciendo rate*horasTrabajadas
@@ -33,7 +31,5 @@ PRIMERA DEMO
 (POR AHORA ESTO NO) El guardar de la facturacion debe guardar: el id de la persona, el log, la fecha en que se hizo, total
 
 
-
-// FIXME Validar todos los campos de datos que pueda ingresar el usuario
-
+// DONE Validar todos los campos de datos que pueda ingresar el usuario
 // DONE Hacer responsive las tablas (no hice nada creo que ya anda bien)

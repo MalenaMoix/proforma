@@ -12,5 +12,3 @@ post 'proforma', :to => 'proforma#new_project_assigned_user'
 put 'proforma/update_project_assigned_user', :to => 'proforma#update_project_assigned_user'
 
 delete 'proforma/delete_project_assigned_user', :to => 'proforma#delete_project_assigned_user'
-
-#delete 'proforma/:project_id', :to => 'proforma#delete_project_assigned_user'

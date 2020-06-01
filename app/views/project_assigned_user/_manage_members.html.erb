@@ -3,13 +3,13 @@
 </div>
 <!-- Stylesheet -->
 <% content_for :header_tags do %>
-  <%= stylesheet_link_tag 'proforma', :plugin => 'proforma', media: 'all' %>
+  <%= stylesheet_link_tag 'manage_members', :plugin => 'proforma', media: 'all' %>
 <% end %>
 <!-- Select box users -->
 <div class="select-user">
   <%= form_with do %>
     <%= hidden_field_tag(:project_id, @project[:id]) %>
-    <label class="label-users" for="users"> Agregar nuevo miembro al proyecto: </label>
+    <label class="label-users" for="users">Agregar nuevo miembro al proyecto:</label>
     <%= select_tag(:user_id, options_for_select(@users_map.sort)) %>
     <span> <%= button_tag "Add", :action => 'new_project_assigned_user', data: { confirm: "Agregar este usuario como miembro del proyecto?" }, 
     class: "button-add" %> </span>
@@ -35,6 +35,7 @@
         <tr class="row-data">
           <%= form_with(url: "proforma/update_project_assigned_user", method: "put") do %>
             <%= hidden_field_tag(:project_id, @project[:id]) %>
+            <%= hidden_field_tag(:user_id, empleado.user.id) %>
             <td class="table-user-name">
               <input id="user" name="user" class="user" type="text" readonly value="<%= empleado.user %>">
             </td>

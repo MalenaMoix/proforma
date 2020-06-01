@@ -3,8 +3,9 @@ class ProformaController < ApplicationController
 
   # noinspection RubyResolve
   before_action :find_project, :authorize, :only => [:index, :block_proforma, :update_hours]
- 
 
+
+ 
   # NUEVOS METODOS
   # OPTIMIZE tal vez estos metodos se puedan pasar al project_assigned_user_controller
   def new_project_assigned_user
@@ -28,21 +29,14 @@ class ProformaController < ApplicationController
   
   def update_project_assigned_user
     project_id = params[:project_id]
-    user = params[:user]
+    user_id = params[:user_id]
     startdate = params[:start_date]
     enddate = params[:end_date]
     hourrate = params[:hour_rate]
     hours = params[:assigned_hours]
     comment = params[:comment]
-    
-    # OPTIMIZE
-    delimitador = " "
-    nombre_apellido = user.split(delimitador)
-    user_encontrado = User.where(:firstname => nombre_apellido[0], :lastname => nombre_apellido[1]).first
 
-    
-    employee_to_update = ProjectAssignedUser.where(:project_id => project_id, :user_id => user_encontrado[:id]).first
-
+    employee_to_update = ProjectAssignedUser.where(:project_id => project_id, :user_id => user_id).first
     employee_to_update.start_date = startdate
     employee_to_update.end_date = enddate
     employee_to_update.hour_rate = hourrate
@@ -81,8 +75,10 @@ class ProformaController < ApplicationController
 
 
   # COMIENZO METODOS QUE YA ESTABAN EN PROFORMA
-
   def index
+    # Metodo que carga los empleados segun su end_date a la tabla manage members
+    get_employees
+    
     current = User.current
     if current.admin || has_role?(current, 'Jefe de proyecto')
       get_manager_index
@@ -447,37 +443,14 @@ class ProformaController < ApplicationController
 
 
   private
-
   def find_project
     @project = Project.find(params[:project_id])
-
-    @members = Member.where(:project_id => @project[:id])
-
     current = User.current
     @proformas = [current]
 
 
-
-
     @users = User.all
     @empleados = ProjectAssignedUser.where(:project_id => @project[:id])
-    @todos = []
-
-    @empleados.each_with_index do |emp, index|
-
-      if !emp.end_date
-        @todos.push(emp)
-      end
-      
-      if emp.end_date
-        # TODO no comparar con el ahora, ver si es que hay que buscar en el selected box de los meses
-        if emp.end_date.month >= DateTime.now.month
-          @todos.push(emp)
-        end
-      end
-    end
-
-    #@empleados_prueba = ProjectAssignedUser.where(:end_date => "2020-06-30").delete_all
 
     
     
@@ -500,5 +473,40 @@ class ProformaController < ApplicationController
 
     # Se usa este map para el select tag en manage members
     @users_map = @users_no_members.map {|user| [user.lastname + " " + user.firstname, user.id]}
+  end
+
+
+  def get_employees
+    # PARAMS
+    @fecha = params[:month]
+
+    if @fecha
+      delimitador = "-"
+      fecha_separada = @fecha.split(delimitador)
+      puts fecha_separada[1]
+    end
+    
+    @empleados = ProjectAssignedUser.where(:project_id => @project[:id])
+    @todos = []
+
+
+    @empleados.each_with_index do |emp, index|
+      if !emp.end_date
+        @todos.push(emp)
+      end
+      
+      if emp.end_date
+        if @fecha
+          if emp.end_date.month >= fecha_separada[1].to_i
+            @todos.push(emp)
+          end
+          
+        else
+          if emp.end_date.month >= DateTime.now.month
+            @todos.push(emp)
+          end
+        end
+      end
+    end
   end
 end
