@@ -121,7 +121,6 @@
       var tr = $(this).closest('tr');
       var inputs = tr.find('input');
     
-      //TODO me lo esta tomando pero no el valor inicial, me agarra lo que se escribe nuevo tambien
       inputs.each(function (index, val) {
         $(this).attr('original-entry', $(this).val());
       });
@@ -151,7 +150,7 @@
       var original_inputs = tr.find('input');
     
       original_inputs.each(function (index, val) {
-        $(this).text( $(this).attr('original-entry') );
+        $(this).val( $(this).attr('original-entry') );
       });
     
       tr.css("background-color", "#f9f9f9");

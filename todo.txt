@@ -1,6 +1,6 @@
 Cuando entras a proforma acordarse de tener el rol "Activo"
 
-// FIXME En la tabla manage members: luego de hacer click en Cancel, y en esa misma row pongo Save, no se esta guardando
+// DONE En la tabla manage members: luego de hacer click en Cancel, y en esa misma row pongo Save, no se esta guardando
 // FIXME Chequear los TODO y OPTIMIZE comentados
 
 
