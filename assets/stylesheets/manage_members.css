@@ -128,7 +128,6 @@
 .table-members input {
     margin-top: 5px;
     margin-bottom: 5px;
-    border: none;
     background-color: transparent;
 }
 
@@ -138,6 +137,7 @@
     padding: 10px;
     text-align: left;
     vertical-align: middle;
+    border: none;
 }
 
 .table-members input[class="hour_rate"] {
@@ -146,18 +146,21 @@
     padding: 10px;
     text-align: left;
     vertical-align: middle;
+    border: none;
 }
 
 .table-members input[class="start_date"] {
     width: 150px;
     height: 30px;
     padding: 10px;
+    border: none;
 }
 
 .table-members input[class="end_date"] {
     width: 150px;
     height: 30px;
     padding: 10px;
+    border: none;
 }
 
 .table-members input[class="assigned_hours"] {
@@ -166,12 +169,14 @@
     padding: 10px;
     text-align: left;
     vertical-align: middle;
+    border: none;
 }
 
 .table-members input[class="comment-members"] {
     width: 300px;
     height: 30px;
     padding: 10px;
+    border: none;
 }
 
 .table-buttons {

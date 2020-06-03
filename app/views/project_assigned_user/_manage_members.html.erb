@@ -31,7 +31,7 @@
           <th class="accion">Acci&oacute;n</th>
         </tr>
       </thead>
-      <% for empleado in @todos %>
+      <% for empleado in @project_active_members %>
         <tr class="row-data">
           <%= form_with(url: "proforma/update_project_assigned_user", method: "put") do %>
             <%= hidden_field_tag(:project_id, @project[:id]) %>
@@ -56,11 +56,11 @@
             </td>
             <td class="table-buttons">
               <span>
-                <button class="button-edit"> Edit </button>
-                <button class="button-cancel"> Cancel </button>
-                <!-- <%= link_to "Delete", "proforma/delete_project_assigned_user", method: :delete, class: "button-delete", data: { confirm: "Are you sure?" } %> -->
-                <%= button_tag "Delete", data: { confirm: "Desea eliminar este miembro del proyecto?" }, class: "button-delete" %>
+                <button class="button-edit">Edit</button>
                 <%= button_tag "Save", data: { confirm: "Desea guardar los cambios realizados?" }, class: "button-save" %>
+                <%= button_tag "Cancel", class: "button-cancel" %>
+                <%= button_tag "Delete", data: { confirm: "Desea eliminar este miembro del proyecto?" }, class: "button-delete" %>
+                <!-- <%= link_to "Delete", "proforma/delete_project_assigned_user", method: :delete, class: "button-delete", data: { confirm: "Are you sure?" } %> -->
               </span>
             </td>
           <% end %>
@@ -94,7 +94,7 @@
           <th>Fecha Fin</th>
         </tr>
       </thead>
-      <% for empleado in @empleados %>
+      <% for empleado in @all_project_members %>
         <tr>
           <td class="historic-user-name"><%= empleado.user %></td>
           <td class="historic-start-date"><%= empleado.start_date %></td>
@@ -118,13 +118,17 @@
     
     $(document).on('click', '.button-edit', function (event) {
       event.preventDefault();
-    
       var tr = $(this).closest('tr');
+      var inputs = tr.find('input');
+    
+      //TODO me lo esta tomando pero no el valor inicial, me agarra lo que se escribe nuevo tambien
+      inputs.each(function (index, val) {
+        $(this).attr('original-entry', $(this).val());
+      });
+    
       tr.css("background-color", "#f0f0f0");
-      tr.find('input').css("border", "1px solid #862a5c");
-      tr.find('input').css("background-color", "white");
-      tr.find('.user').css("background-color", "transparent");
-      tr.find('.user').css("border", "none");
+      tr.find('input').css("border", "1px solid #862a5c").css("background-color", "white");
+      tr.find('.user').css("background-color", "transparent").css("border", "none");
     
       tr.find('.button-cancel').show();
       tr.find('.button-delete').show();
@@ -138,25 +142,20 @@
       tr.find('.comment-members').removeAttr("readonly");
     
       $(this).focus();
-    
-      tr.each(function (index, val) {
-        $(this).attr('original-entry', $(this).html());
-      });
     })
     
     
     $(document).on('click', '.button-cancel', function (event) {
       event.preventDefault();
-    
       var tr = $(this).closest('tr');
+      var original_inputs = tr.find('input');
     
-      tr.each(function (index, val) {
-        $(this).html( $(this).attr('original-entry') );
+      original_inputs.each(function (index, val) {
+        $(this).text( $(this).attr('original-entry') );
       });
     
       tr.css("background-color", "#f9f9f9");
-      tr.find('input').css("border", "none");
-      tr.find('input').css("background-color", "transparent");
+      tr.find('input').css("border", "none").css("background-color", "transparent");
     
       tr.find('.button-cancel').hide();
       tr.find('.button-delete').hide();
@@ -178,17 +177,17 @@
     $(document).find('.table-historic-members').hide();
     $(document).find('.button-hide-historic-table').hide();
     
+    
     $(document).on('click', '.button-show-historic-table', function (event) {
       event.preventDefault();
-    
       $(document).find('.table-historic-members').show();
       $(document).find('.button-hide-historic-table').show();
       $(document).find('.button-show-historic-table').hide();
     });
     
+    
     $(document).on('click', '.button-hide-historic-table', function (event) {
       event.preventDefault();
-    
       $(document).find('.table-historic-members').hide();
       $(document).find('.button-hide-historic-table').hide();
       $(document).find('.button-show-historic-table').show();

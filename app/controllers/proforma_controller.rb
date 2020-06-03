@@ -76,7 +76,7 @@ class ProformaController < ApplicationController
 
   # COMIENZO METODOS QUE YA ESTABAN EN PROFORMA
   def index
-    # Metodo que carga los empleados segun su end_date a la tabla manage members
+    # Metodo que carga los all_project_members segun su end_date a la tabla manage members
     get_employees
     
     current = User.current
@@ -89,7 +89,7 @@ class ProformaController < ApplicationController
 
 
   def get_dev_index(current)
-    if has_role?(current, 'Desarrollador')
+    if has_role?(current, 'Desarrollador') #Aca validar que sea miembro activo del proyecto
       month_to_show = DateTime.new(DateTime.now.year, DateTime.now.month, 1)
       @proformas = [current]
       @time_entries = TimeEntry.where(:user_id => current.id, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
@@ -99,11 +99,23 @@ class ProformaController < ApplicationController
   def get_manager_index
     @months = TimeEntry.select('tyear, tmonth').where(:project_id => @project[:id]).group('tyear, tmonth')
     month_to_show = params[:month] ? DateTime.parse(params[:month]) : DateTime.new(DateTime.now.year, DateTime.now.month, 1)
-    all = @project.members.all
+
+    #puts ("FECHA QUE MUESTRA: " + params[:month])
+    #date_selected_in_box = params[:month]
+    all_members = ProjectAssignedUser.where(:project_id => @project[:id])
+    for am in all_members
+      puts am.user
+    end
+
+
+
+
+    all = @project.members.all #Aca hay que traer los miembros del mes en curso basado en mi manage members
     ids = []
     ids_aux = []
 
     all.each do |a|
+    #all_members.each do |a|
       ids_aux.push a[:user_id]
     end
 
@@ -119,7 +131,7 @@ class ProformaController < ApplicationController
       current_month = month_to_show.year == DateTime.now.year && month_to_show.month == DateTime.now.month
 
       hasHours = hasHours?(id, month_to_show)
-      hasRole = has_role?(user[0], 'Activo')
+      hasRole = has_role?(user[0], 'Activo') # Solo mostrar los usuaios activos del mes actual
 
       if hasHours || (current_month && hasRole)
         ids.push id
@@ -448,31 +460,30 @@ class ProformaController < ApplicationController
     current = User.current
     @proformas = [current]
 
+    search_users_no_members
+  end
 
+
+  def search_users_no_members
     @users = User.all
-    @empleados = ProjectAssignedUser.where(:project_id => @project[:id])
+    @all_project_members = ProjectAssignedUser.where(:project_id => @project[:id])
 
-    
-    
-    # OPTIMIZE
-    # Tal vez se pueda meter esto en un metodo o hacerlo de otra forma
-    # IDs de todos los User
-    @ids_users = []
-    for @user in @users
-      @ids_users.push @user[:id]
+    # IDs de project_active_members los User
+    ids_all_users = []
+    for user_i in @users
+      ids_all_users.push user_i[:id]
     end
-    # IDs de todos los ProjectAssignedUser
-    @ids_empleados = []
-    for @empleado in @empleados
-      @ids_empleados.push @empleado[:user_id]
+    # IDs de project_active_members los ProjectAssignedUser
+    ids_all_empleados = []
+    for empleado in @all_project_members
+      ids_all_empleados.push empleado[:user_id]
     end
     # IDs de los User que no estan asignados al proyecto
-    @ids = @ids_users - @ids_empleados
+    ids_all_users_no_assigned = ids_all_users - ids_all_empleados
     # Todos los User que no estan  asignados al proyecto para cargarlos en el select box
-    @users_no_members = User.where(:id => @ids)
-
+    users_no_members = User.where(:id => ids_all_users_no_assigned)
     # Se usa este map para el select tag en manage members
-    @users_map = @users_no_members.map {|user| [user.lastname + " " + user.firstname, user.id]}
+    @users_map = users_no_members.map {|user| [user.lastname + " " + user.firstname, user.id]}
   end
 
 
@@ -483,27 +494,25 @@ class ProformaController < ApplicationController
     if @fecha
       delimitador = "-"
       fecha_separada = @fecha.split(delimitador)
-      puts fecha_separada[1]
     end
     
-    @empleados = ProjectAssignedUser.where(:project_id => @project[:id])
-    @todos = []
+    @all_project_members = ProjectAssignedUser.where(:project_id => @project[:id])
+    @project_active_members = []
 
-
-    @empleados.each_with_index do |emp, index|
+    @all_project_members.each_with_index do |emp, index|
       if !emp.end_date
-        @todos.push(emp)
+        @project_active_members.push(emp)
       end
       
       if emp.end_date
         if @fecha
           if emp.end_date.month >= fecha_separada[1].to_i
-            @todos.push(emp)
+            @project_active_members.push(emp)
           end
           
         else
           if emp.end_date.month >= DateTime.now.month
-            @todos.push(emp)
+            @project_active_members.push(emp)
           end
         end
       end

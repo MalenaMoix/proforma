@@ -6,8 +6,6 @@ class ProjectAssignedUserController < ApplicationController
     end
 
     def new_project_assigned_user
-        @employee2 = ProjectAssignedUser.new
-        @employee2.save
     end
 
     def update
