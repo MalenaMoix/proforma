@@ -60,7 +60,6 @@
                 <%= button_tag "Save", data: { confirm: "Desea guardar los cambios realizados?" }, class: "button-save" %>
                 <%= button_tag "Cancel", class: "button-cancel" %>
                 <%= button_tag "Delete", data: { confirm: "Desea eliminar este miembro del proyecto?" }, class: "button-delete" %>
-                <!-- <%= link_to "Delete", "proforma/delete_project_assigned_user", method: :delete, class: "button-delete", data: { confirm: "Are you sure?" } %> -->
               </span>
             </td>
           <% end %>
@@ -70,7 +69,7 @@
   </table>
   <br/>
   <div class="table-footer">
-    Miembros del <%= @project %>
+    Miembros de <%= @project %>
   </div>
 </div>
 <br/>
@@ -176,14 +175,12 @@
     $(document).find('.table-historic-members').hide();
     $(document).find('.button-hide-historic-table').hide();
     
-    
     $(document).on('click', '.button-show-historic-table', function (event) {
       event.preventDefault();
       $(document).find('.table-historic-members').show();
       $(document).find('.button-hide-historic-table').show();
       $(document).find('.button-show-historic-table').hide();
     });
-    
     
     $(document).on('click', '.button-hide-historic-table', function (event) {
       event.preventDefault();

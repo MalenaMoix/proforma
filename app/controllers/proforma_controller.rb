@@ -5,7 +5,6 @@ class ProformaController < ApplicationController
   before_action :find_project, :authorize, :only => [:index, :block_proforma, :update_hours]
 
 
- 
   # NUEVOS METODOS
   # OPTIMIZE tal vez estos metodos se puedan pasar al project_assigned_user_controller
   def new_project_assigned_user
@@ -76,9 +75,9 @@ class ProformaController < ApplicationController
 
   # COMIENZO METODOS QUE YA ESTABAN EN PROFORMA
   def index
-    # Metodo que carga los all_project_members segun su end_date a la tabla manage members
+    # Metodo que carga los project_active_members segun su end_date a la tabla manage members
     get_employees
-    
+
     current = User.current
     if current.admin || has_role?(current, 'Jefe de proyecto')
       get_manager_index
@@ -89,34 +88,23 @@ class ProformaController < ApplicationController
 
 
   def get_dev_index(current)
-    if has_role?(current, 'Desarrollador') #Aca validar que sea miembro activo del proyecto
+    #if has_role?(current, 'Desarrollador') #Aca validar que sea miembro activo del proyecto
+      current_member = ProjectAssignedUser.where(:user_id => current.id, :project_id => @project[:id]).first
       month_to_show = DateTime.new(DateTime.now.year, DateTime.now.month, 1)
-      @proformas = [current]
-      @time_entries = TimeEntry.where(:user_id => current.id, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
-    end
+      @proformas = [current_member]
+      @time_entries = TimeEntry.where(:user_id => current_member.user.id, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
+    #end
   end
+
 
   def get_manager_index
     @months = TimeEntry.select('tyear, tmonth').where(:project_id => @project[:id]).group('tyear, tmonth')
     month_to_show = params[:month] ? DateTime.parse(params[:month]) : DateTime.new(DateTime.now.year, DateTime.now.month, 1)
 
-    #puts ("FECHA QUE MUESTRA: " + params[:month])
-    #date_selected_in_box = params[:month]
-    all_members = ProjectAssignedUser.where(:project_id => @project[:id])
-    for am in all_members
-      puts am.user
-    end
-
-
-
-
-    all = @project.members.all #Aca hay que traer los miembros del mes en curso basado en mi manage members
-    ids = []
-    ids_aux = []
-
-    all.each do |a|
-    #all_members.each do |a|
-      ids_aux.push a[:user_id]
+    #CAMBIO ACA
+    ids_active_members = []
+    @project_active_members.each do |member|
+      ids_active_members.push member[:user_id]
     end
 
     settings = Setting.plugin_proforma['block_'+params[:project_id]+'']
@@ -126,31 +114,46 @@ class ProformaController < ApplicationController
       block_date = DateTime.new(2014, 1, 1)
     end
 
-    ids_aux.each do |id|
-      user = User.where(id: id)
-      current_month = month_to_show.year == DateTime.now.year && month_to_show.month == DateTime.now.month
 
-      hasHours = hasHours?(id, month_to_show)
-      hasRole = has_role?(user[0], 'Activo') # Solo mostrar los usuaios activos del mes actual
+    #ids_active_members.each do |id|
+    #  user = User.where(id: id)
+    #  current_month = month_to_show.year == DateTime.now.year && month_to_show.month == DateTime.now.month
+    #  (month_to_show.year == año actual && month_to_show.month == mes actual) ? es el mes actual : no es el mes actual
 
-      if hasHours || (current_month && hasRole)
-        ids.push id
-      end
-    end
-    @proformas = User.where(id: ids)
-    @time_entries = TimeEntry.where(user_id: ids, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
+    #  hasHours = hasHours?(id, month_to_show)
+    #  hasRole = has_role?(user[0], 'Activo') # Solo mostrar los usuarios activos del mes actual
+
+    #  if hasHours || (current_month && hasRole)
+    #    ids.push id
+    #  end
+    #end
+
+
+    #CAMBIO ACA
+    # Aca ver si es miembro permitido
+    @proformas = @project_active_members
+    @time_entries = TimeEntry.where(user_id: ids_active_members, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
+    #@proformas = User.where(id: ids)
+    #@time_entries = TimeEntry.where(user_id: ids, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
   end
+
 
   def get_admin_index
     @months = TimeEntry.select('tyear, tmonth').where(:project_id => @project[:id]).group('tyear, tmonth')
     month_to_show = params[:month] ? DateTime.parse(params[:month]) : DateTime.now
-    @proformas = User.all
+
+    #CAMBIO ACA 
+    #@proformas = User.all
+    get_employees
+    @proformas = @project_active_members
     @time_entries = TimeEntry.where(:tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
   end
+
 
   def has_role?(current, role)
     current.roles_for_project(@project).include?(Role.find_by(:name => role))
   end
+
 
   def hasHours?(id, month_to_show)
     time_entry= TimeEntry.where("user_id = ? and tmonth = ? and tyear = ? and project_id = ? and (hours > 0 or (comments is not null and comments != '') )",
@@ -167,6 +170,7 @@ class ProformaController < ApplicationController
   def new
     @proforma = Proforma.new
   end
+
 
   def update_hours
     hours = []
@@ -188,30 +192,34 @@ class ProformaController < ApplicationController
     end
 
 
-    params['day'].each do |i|
-      # i[0] -> user
-      # i[1] -> j
-      i[1].each do |j|
-        # j[0] -> day
-        # j[1][:hours] -> hours spent
-        # j[1][:comment] -> comment
-        # j[1][:activityId] -> activity_id
-        if j[1][:hours] && round_to_quarter(j[1][:hours]) >= 0 && round_to_quarter(j[1][:hours]) <= 24
-          comment = j[1][:comment]
+    
+    # params['day'] -> {"user_id"=>{dia1=>{comment, hours, activityid}, ...}, ...}
+    params['day'].each do |id_user|
+      # id_user[0] -> user id
+      # id_user[1] -> proforma_table_row
+      id_user[1].each do |proforma_table_row|
+        # proforma_table_row[0] -> day
+        # proforma_table_row[1][:hours] -> hours spent
+        # proforma_table_row[1][:comment] -> comment
+        # proforma_table_row[1][:activityId] -> activity_id
+        # strip! returns nil if there is no text to trim...
+        if proforma_table_row[1][:hours] && round_to_quarter(proforma_table_row[1][:hours]) >= 0 && round_to_quarter(proforma_table_row[1][:hours]) <= 24
+          comment = proforma_table_row[1][:comment]
           strip = comment ? comment.strip! : ''
 
-          activity = if (User.current.admin || has_role?(User.current, 'Jefe de proyecto')) && j[1][:activityId]
-                       j[1][:activityId].length > 0 ? j[1][:activityId] : nil
+          activity = if (User.current.admin || has_role?(User.current, 'Jefe de proyecto')) && proforma_table_row[1][:activityId]
+                       proforma_table_row[1][:activityId].length > 0 ? proforma_table_row[1][:activityId] : nil
                      else
                        nil
                      end
-          hours.push({:time => round_to_quarter(j[1][:hours]),
-                      # strip! returns nil if there is no text to trim...
+          hours.push({:time => round_to_quarter(proforma_table_row[1][:hours]),
                       :comments => strip ? strip : comment,
-                      :day => j[0].to_i, :user => i[0], :activity_id => activity})
+                      :day => proforma_table_row[0].to_i, :user => id_user[0], :activity_id => activity})
         end
       end
     end
+
+    
 
     pr_id = params[:project_id]
     resultUpdate = []
@@ -220,30 +228,34 @@ class ProformaController < ApplicationController
       date_time_new = DateTime.new(month_to_update.year, month_to_update.month, hour[:day])
       if date_time_new > block_date
         if (time_entry_old = record_exists?(date_time_new, hour[:user], pr_id))
-          r = false
+          boolean_success = false
           if hour[:activity_id]
-            r = time_entry_old.update(:hours => hour[:time], :comments => hour[:comments], :activity_id => hour[:activity_id])
+            boolean_success = time_entry_old.update(:hours => hour[:time], :comments => hour[:comments], :activity_id => hour[:activity_id])
           else
             # Hardcoded until customization
             if User.current.admin || has_role?(User.current, 'Jefe de proyecto')
-              r = time_entry_old.update(:hours => hour[:time], :comments => hour[:comments], :activity_id => TimeEntryActivity.where(name: 'Desarrollo')[0].id)
+              boolean_success = time_entry_old.update(:hours => hour[:time], :comments => hour[:comments], :activity_id => TimeEntryActivity.find_by(name: 'Desarrollo').id)
             else
-              r = time_entry_old.update(:hours => hour[:time], :comments => hour[:comments])
+              boolean_success = time_entry_old.update(:hours => hour[:time], :comments => hour[:comments])
             end
           end
-          resultUpdate.push(hour[:user].to_s + ", " + hour[:day].to_s => [r, hour[:activity_id], hour[:time]].join(","))
-          r
+          resultUpdate.push(hour[:user].to_s + ", " + hour[:day].to_s => [boolean_success, hour[:activity_id], hour[:time]].join(","))
+          boolean_success
         else
           time_entry_new = TimeEntry.new(
               :comments => hour[:comments],
               :spent_on => date_time_new,
-              :activity_id => hour[:activity_id] ? hour[:activity_id] : TimeEntryActivity.where(name: 'Desarrollo')[0].id)
+              :activity_id => hour[:activity_id] ? hour[:activity_id] : TimeEntryActivity.find_by(name: 'Desarrollo').id)
           time_entry_new.hours = hour[:time]
           time_entry_new.user_id = hour[:user]
           time_entry_new.project_id = pr_id
-          r = time_entry_new.save
-          resultInsert.push(hour[:user].to_s + ", " + hour[:day].to_s => [r, hour[:activity_id], hour[:time]].join(","))
-          r
+
+          # TEMPORARY FIX
+          # Hicimos esto porque Redmine no te permite sobreescribir controllers ni modelos (recarga todo)
+          boolean_success = time_entry_new.save(validate: false)
+
+          resultInsert.push(hour[:user].to_s + ", " + hour[:day].to_s => [boolean_success, hour[:activity_id], hour[:time]].join(","))
+          boolean_success
         end
       else
         true
@@ -264,7 +276,6 @@ class ProformaController < ApplicationController
         @issue.description = params[:proforma_seguimiento]
         @issue.start_date = issue_month_to_update
       else
-        #success_array.push(update_seguimiento(params))
         @issue = Issue.new
         @issue.project_id = pr_id
         @issue.subject = "Seguimiento " + issue_month_to_update.strftime('%Y-%m-%d')
@@ -276,9 +287,10 @@ class ProformaController < ApplicationController
         @issue.author_id = User.current.id
         @issue.start_date = issue_month_to_update
       end
-      iss = @issue.save
     end
 
+
+    
     if success_array.all?
       flash[:notice] = 'Proforma guardada'
     else
@@ -294,9 +306,11 @@ class ProformaController < ApplicationController
     end
   end
 
+
   def record_exists?(date_time_new, user, project_id)
     TimeEntry.find_by(:spent_on => date_time_new, :user_id => user, :project_id => project_id)
   end
+
 
   def block_proforma
     find_project
@@ -397,10 +411,10 @@ class ProformaController < ApplicationController
     @proformas.each do |p|
       total=0
       workable=0
-      @pdf.write_html_cell(first_column_width, 0, first_column_margin, row_y, "<p>#{p}</p>", 1, 0, 0)
+      @pdf.write_html_cell(first_column_width, 0, first_column_margin, row_y, "<p>#{p.user}</p>", 1, 0, 0)
       (0..(this_month_days-1)).to_a.each do |d|
         date_time_new = DateTime.new(month_to_show.year, month_to_show.month, d+1)
-        var1 = @time_entries.where(:spent_on => date_time_new, :user_id => p[:id])[0]
+        var1 = @time_entries.where(:spent_on => date_time_new, :user_id => p[:user_id])[0]
         is_activity_timeoff = var1[:activity_id] == time_entry_activity[:id]
         background_color = (date_time_new.saturday? || date_time_new.sunday? || holidays.include?(date_time_new.strftime('%m/%d/%Y'))) ? 1 : (is_activity_timeoff ? 1 : 0)
         day_hours = var1 ? (var1[:hours].round != 0 ? var1[:hours].round : nil) : nil
@@ -450,7 +464,6 @@ class ProformaController < ApplicationController
 
     # noinspection RailsParamDefResolve
     redirect_to :action => 'index', :project_id => params[:project_id]
-
   end
 
 
@@ -458,26 +471,41 @@ class ProformaController < ApplicationController
   def find_project
     @project = Project.find(params[:project_id])
     current = User.current
-    @proformas = [current]
+    current_member = ProjectAssignedUser.where(:user_id => current.id).first
+
+    @proformas = [current_member]
 
     search_users_no_members
   end
 
 
+  # REVISAR METODO
   def search_users_no_members
     @users = User.all
     @all_project_members = ProjectAssignedUser.where(:project_id => @project[:id])
-
-    # IDs de project_active_members los User
+    actual_month = DateTime.now.month
+    
+    # OPTIMIZE
+    # IDs de todos los User
     ids_all_users = []
     for user_i in @users
       ids_all_users.push user_i[:id]
     end
-    # IDs de project_active_members los ProjectAssignedUser
+
+    # IDs de los miembros activos de ProjectAssignedUser
     ids_all_empleados = []
     for empleado in @all_project_members
-      ids_all_empleados.push empleado[:user_id]
+      if empleado.end_date
+        if empleado.end_date.month < actual_month
+          ids_all_users.push empleado[:user_id]
+        else
+          ids_all_empleados.push empleado[:user_id]
+        end
+      else
+        ids_all_empleados.push empleado[:user_id]
+      end
     end
+
     # IDs de los User que no estan asignados al proyecto
     ids_all_users_no_assigned = ids_all_users - ids_all_empleados
     # Todos los User que no estan  asignados al proyecto para cargarlos en el select box
@@ -488,32 +516,20 @@ class ProformaController < ApplicationController
 
 
   def get_employees
-    # PARAMS
-    @fecha = params[:month]
-
-    if @fecha
-      delimitador = "-"
-      fecha_separada = @fecha.split(delimitador)
-    end
+    fecha = params[:month] ? DateTime.parse(params[:month]) : DateTime.new(DateTime.now.year, DateTime.now.month, 1)
     
     @all_project_members = ProjectAssignedUser.where(:project_id => @project[:id])
     @project_active_members = []
 
     @all_project_members.each_with_index do |emp, index|
       if !emp.end_date
-        @project_active_members.push(emp)
-      end
-      
-      if emp.end_date
-        if @fecha
-          if emp.end_date.month >= fecha_separada[1].to_i
-            @project_active_members.push(emp)
-          end
-          
-        else
-          if emp.end_date.month >= DateTime.now.month
-            @project_active_members.push(emp)
-          end
+        if emp.start_date.month <= fecha.month || emp.start_date.year < fecha.year
+          @project_active_members.push(emp)
+        end
+      else
+        if (emp.end_date.month >= fecha.month) &&
+          (emp.start_date.month <= fecha.month || emp.start_date.year < fecha.year)
+          @project_active_members.push(emp)
         end
       end
     end
