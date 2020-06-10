@@ -11,8 +11,7 @@
     <%= hidden_field_tag(:project_id, @project[:id]) %>
     <label class="label-users" for="users">Agregar nuevo miembro al proyecto:</label>
     <%= select_tag(:user_id, options_for_select(@users_map.sort)) %>
-    <span> <%= button_tag "Add", :action => 'new_project_assigned_user', data: { confirm: "Agregar este usuario como miembro del proyecto?" }, 
-    class: "button-add" %> </span>
+    <span> <%= button_tag "Add", :action => 'new_project_assigned_user', data: { confirm: "Agregar este usuario como miembro del proyecto?" }, class: "button-add" %> </span>
   <% end %>
 </div>
 <br/>
@@ -103,24 +102,25 @@
     </table>
   </div>
   <!-- Manejo del contenido editable de la tabla -->
-  <script type="text/javascript">
+  <!-- <%= javascript_include_tag 'manage_members', :plugin => 'proforma' %> -->
+  <script>
     $(document).find('.button-cancel').hide();
     $(document).find('.button-delete').hide();
     $(document).find('.button-save').hide();
     
     
     //TODO Actualmente se elimina correctamente de la tabla, pero falta eliminarlo de la BD (NO HACER POR AHORA)
-    $(document).on('click', '.button-delete', function () {
+    $(document).on('click', '.button-delete', function() {
       $(this).parents('tr').remove();
-    })
+    });
     
     
-    $(document).on('click', '.button-edit', function (event) {
+    $(document).on('click', '.button-edit', function(event) {
       event.preventDefault();
       var tr = $(this).closest('tr');
       var inputs = tr.find('input');
     
-      inputs.each(function (index, val) {
+      inputs.each(function(index, val) {
         $(this).attr('original-entry', $(this).val());
       });
     
@@ -140,16 +140,16 @@
       tr.find('.comment-members').removeAttr("readonly");
     
       $(this).focus();
-    })
+    });
     
     
-    $(document).on('click', '.button-cancel', function (event) {
+    $(document).on('click', '.button-cancel', function(event) {
       event.preventDefault();
       var tr = $(this).closest('tr');
       var original_inputs = tr.find('input');
     
-      original_inputs.each(function (index, val) {
-        $(this).val( $(this).attr('original-entry') );
+      original_inputs.each(function(index, val) {
+          $(this).val($(this).attr('original-entry'));
       });
     
       tr.css("background-color", "#f9f9f9");
@@ -170,19 +170,18 @@
     });
     
     
-    
-    // Manejo de tabla historial de miembros
+    // Manejo de tabla del historial de miembros
     $(document).find('.table-historic-members').hide();
     $(document).find('.button-hide-historic-table').hide();
     
-    $(document).on('click', '.button-show-historic-table', function (event) {
+    $(document).on('click', '.button-show-historic-table', function(event) {
       event.preventDefault();
       $(document).find('.table-historic-members').show();
       $(document).find('.button-hide-historic-table').show();
       $(document).find('.button-show-historic-table').hide();
     });
     
-    $(document).on('click', '.button-hide-historic-table', function (event) {
+    $(document).on('click', '.button-hide-historic-table', function(event) {
       event.preventDefault();
       $(document).find('.table-historic-members').hide();
       $(document).find('.button-hide-historic-table').hide();

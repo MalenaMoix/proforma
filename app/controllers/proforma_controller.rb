@@ -75,7 +75,7 @@ class ProformaController < ApplicationController
 
   # COMIENZO METODOS QUE YA ESTABAN EN PROFORMA
   def index
-    # Metodo que carga los project_active_members segun su end_date a la tabla manage members
+    # Metodo que carga los project_active_members segun su end_date y start_date a la tabla manage members
     get_employees
 
     current = User.current
@@ -87,13 +87,25 @@ class ProformaController < ApplicationController
   end
 
 
+  # CAMBIO ACA
   def get_dev_index(current)
-    #if has_role?(current, 'Desarrollador') #Aca validar que sea miembro activo del proyecto
-      current_member = ProjectAssignedUser.where(:user_id => current.id, :project_id => @project[:id]).first
-      month_to_show = DateTime.new(DateTime.now.year, DateTime.now.month, 1)
-      @proformas = [current_member]
-      @time_entries = TimeEntry.where(:user_id => current_member.user.id, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
-    #end
+    # TODO: solo se le deberian mostrar los proyectos en los cuales es o fue miembro
+    # Ahora solo impide que ingrese horas en el proyecto si no es miembro
+    # Validar que sea miembro activo del proyecto
+    current_member = ProjectAssignedUser.where(:user_id => current.id, :project_id => @project[:id]).last
+    month_to_show = DateTime.new(DateTime.now.year, DateTime.now.month, 1)
+
+    if current_member
+      if !current_member.end_date || current_member.end_date >= month_to_show
+        @proformas = [current_member]
+        @time_entries = TimeEntry.where(:user_id => current_member.user.id, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
+      else
+        @proformas = [current_member]
+        flash[:error] = "Usted no es miembro del proyecto actualmente"
+      end
+    else
+      flash[:error] = "Usted no es miembro de este proyecto"
+    end
   end
 
 
@@ -114,36 +126,17 @@ class ProformaController < ApplicationController
       block_date = DateTime.new(2014, 1, 1)
     end
 
-
-    #ids_active_members.each do |id|
-    #  user = User.where(id: id)
-    #  current_month = month_to_show.year == DateTime.now.year && month_to_show.month == DateTime.now.month
-    #  (month_to_show.year == año actual && month_to_show.month == mes actual) ? es el mes actual : no es el mes actual
-
-    #  hasHours = hasHours?(id, month_to_show)
-    #  hasRole = has_role?(user[0], 'Activo') # Solo mostrar los usuarios activos del mes actual
-
-    #  if hasHours || (current_month && hasRole)
-    #    ids.push id
-    #  end
-    #end
-
-
     #CAMBIO ACA
     # Aca ver si es miembro permitido
     @proformas = @project_active_members
     @time_entries = TimeEntry.where(user_id: ids_active_members, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
-    #@proformas = User.where(id: ids)
-    #@time_entries = TimeEntry.where(user_id: ids, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
   end
 
 
   def get_admin_index
     @months = TimeEntry.select('tyear, tmonth').where(:project_id => @project[:id]).group('tyear, tmonth')
     month_to_show = params[:month] ? DateTime.parse(params[:month]) : DateTime.now
-
-    #CAMBIO ACA 
-    #@proformas = User.all
+    #CAMBIO ACA
     get_employees
     @proformas = @project_active_members
     @time_entries = TimeEntry.where(:tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
@@ -219,13 +212,16 @@ class ProformaController < ApplicationController
       end
     end
 
-    
-
+      
+    # BUG: cuando se agrega un miembro que ya estuvo anteriormente en el proyecto, se agrega con las horas que trabajo en el proyecto anteriormente
     pr_id = params[:project_id]
     resultUpdate = []
     resultInsert = []
     success_array = hours.map {|hour|
-      date_time_new = DateTime.new(month_to_update.year, month_to_update.month, hour[:day])
+      date_time_new = DateTime.new(month_to_update.year, month_to_update.month, hour[:day]) 
+      member_in_project = ProjectAssignedUser.where(:project_id => pr_id, :user_id => hour[:user]).last
+      time_entry_member_in_project = TimeEntry.where(:project_id => pr_id, :user_id => hour[:user]).last
+      
       if date_time_new > block_date
         if (time_entry_old = record_exists?(date_time_new, hour[:user], pr_id))
           boolean_success = false
@@ -251,7 +247,7 @@ class ProformaController < ApplicationController
           time_entry_new.project_id = pr_id
 
           # TEMPORARY FIX
-          # Hicimos esto porque Redmine no te permite sobreescribir controllers ni modelos (recarga todo)
+          # Hicimos esto porque Redmine no te permite sobreescribir controllers ni modelos
           boolean_success = time_entry_new.save(validate: false)
 
           resultInsert.push(hour[:user].to_s + ", " + hour[:day].to_s => [boolean_success, hour[:activity_id], hour[:time]].join(","))
@@ -461,18 +457,17 @@ class ProformaController < ApplicationController
     @attachment.container_type = 'Project'
     @attachment.save
 
-
     # noinspection RailsParamDefResolve
     redirect_to :action => 'index', :project_id => params[:project_id]
   end
 
 
+  
   private
   def find_project
     @project = Project.find(params[:project_id])
     current = User.current
     current_member = ProjectAssignedUser.where(:user_id => current.id).first
-
     @proformas = [current_member]
 
     search_users_no_members
@@ -485,7 +480,7 @@ class ProformaController < ApplicationController
     @all_project_members = ProjectAssignedUser.where(:project_id => @project[:id])
     actual_month = DateTime.now.month
     
-    # OPTIMIZE
+    # OPTIMIZE: tal vez se pueda mejor la manera de hacer esto
     # IDs de todos los User
     ids_all_users = []
     for user_i in @users
@@ -523,12 +518,11 @@ class ProformaController < ApplicationController
 
     @all_project_members.each_with_index do |emp, index|
       if !emp.end_date
-        if emp.start_date.month <= fecha.month || emp.start_date.year < fecha.year
+        if emp.start_date <= fecha
           @project_active_members.push(emp)
         end
       else
-        if (emp.end_date.month >= fecha.month) &&
-          (emp.start_date.month <= fecha.month || emp.start_date.year < fecha.year)
+        if (emp.start_date <= fecha) && emp.end_date > fecha
           @project_active_members.push(emp)
         end
       end

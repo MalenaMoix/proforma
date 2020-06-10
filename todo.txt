@@ -42,6 +42,7 @@ PRIMERA DEMO
     //DONE Consultar los miembros del proyecto en el mes en curso
     //DONE Listarlos
     //FIXME Traer los time entries actuales para esa persona
+    //FIXME Cuando agrego un miembro que estuvo anteriormente en el proyecto lo muestra con los time entries que tuvo en el pasado
     
     //TODO Para todos los time entries que no haya datos, que no sean ni sabado ni domingo ni feriado, rellenar con las horas dedicadas al proyecto. Las que se encuentran en la tabla manage members.
 
@@ -52,8 +53,6 @@ PRIMERA DEMO
 
 
 
-Preguntar si esta bien que no se pueda agregar un comentario en la Proforma en un mes que ya paso
-
 Bookmark Todas en 8 = javascript:$('td.working input').filter(function(i,e){ return e.value == ""}).val(8);
 
 
@@ -61,7 +60,7 @@ Bookmark Todas en 8 = javascript:$('td.working input').filter(function(i,e){ ret
 
 
 // TODO Activar el permiso para los non members del view planilla y change planilla (manual)
-// TODO Si una perosna no esta en el proyecto que no pueda guardar horas
+// DONE Si una perosna no esta en el proyecto que no pueda guardar horas
 
 // DONE Facturacion tab este protegido por un permiso view_facturacion que por defecto no lo tenga nadie
 

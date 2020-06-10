@@ -17,7 +17,9 @@
 <% end %>
 <div class="proforma-plugin">
   <h2>Proforma  <%= @project %></h2>
-  <button class="manage-members" id="button" style="vertical-align:middle"><span>Manage members </span></button>
+  <% if has_role %>
+    <button class="manage-members" id="button" style="vertical-align:middle"><span>Manage members </span></button>
+  <% end %>
   <%
        feriadoStr = 'feriados'
        var0 = Setting.plugin_proforma[feriadoStr]
@@ -117,13 +119,17 @@
             <tr>
                 <%= hidden_field_tag(:user, proforma[:user_id]) %>
                 <%= hidden_field_tag(:month, params[:month]) %>
-                <!--<td class="person"><%= proforma %> </td> -->
                 <td class="person"><%= proforma.user %> </td>
                 <% (1..this_month_days).to_a.each do |d| %>
                     <%
+                      # CAMBIO ACA
                        date_time_new = DateTime.new(month_to_show.year, month_to_show.month, d)
-                       var1 = @time_entries.where(:spent_on => date_time_new, :user_id => proforma[:user_id], :project_id => @project[:id])[0]
-                       is_activity_timeoff = var1 ? var1[:activity_id] == time_entry_activity[:id] : false
+                       #var1 = @time_entries.where(:spent_on => date_time_new, :user_id => proforma[:user_id], :project_id => @project[:id])[0]
+                       #is_activity_timeoff = var1 ? var1[:activity_id] == time_entry_activity[:id] : false
+                        if @time_entries
+                          var1 = @time_entries.where(:spent_on => date_time_new, :user_id => proforma[:user_id], :project_id => @project[:id])[0]
+                          is_activity_timeoff = var1 ? var1[:activity_id] == time_entry_activity[:id] : false
+                        end
                     %>
                     <td class="<%= ((date_time_new.saturday? || date_time_new.sunday? || holidays.include?(date_time_new.strftime('%Y-%m-%d'))) ?
                             'non-working' :
@@ -131,10 +137,10 @@
 
                         <div class="input-wrapper">
                             <%= # noinspection RubyNestedTernaryOperatorsInspection
-
+                                # CAMBIO ACA: bloqueo de campos para que no pueda ingresar horas si no es miembro del proyecto. Agregado de condicion en el disabled
                                 text_field_tag("day[#{proforma[:user_id]}][#{d}][hours]",
                                                var1 ? (round_to_quarter(var1[:hours]) != 0 ? round_to_quarter(var1[:hours]) : nil) : nil,
-                                               maxlength: 5, group: proforma[:user_id], disabled: date_time_new <= blocked_until) %>
+                                               maxlength: 5, group: proforma[:user_id], disabled: date_time_new <= blocked_until || !@time_entries) %>
 
 
                             <%= hidden_field_tag("day[#{proforma[:user_id]}][#{d}][activityId]", is_activity_timeoff ? time_entry_activity[:id] : nil) %>
