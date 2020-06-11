@@ -30,28 +30,30 @@
           <th class="accion">Acci&oacute;n</th>
         </tr>
       </thead>
-      <% for empleado in @project_active_members %>
+      <% for @empleado in @project_active_members %>
         <tr class="row-data">
           <%= form_with(url: "proforma/update_project_assigned_user", method: "put") do %>
             <%= hidden_field_tag(:project_id, @project[:id]) %>
-            <%= hidden_field_tag(:user_id, empleado.user.id) %>
+            <%= hidden_field_tag(:user_id, @empleado.user.id) %>
+            <input type="hidden" id="employeeId" name="employeeId" value="<%= @empleado.user.id %>">
+            <input type="hidden" id="projectId" name="projectId" value="<%= @project[:id] %>">
             <td class="table-user-name">
-              <input id="user" name="user" class="user" type="text" readonly value="<%= empleado.user %>">
+              <input id="user" name="user" class="user" type="text" readonly value="<%= @empleado.user %>">
             </td>
             <td class="table-start-date">
-              <input id="start_date" name="start_date" class="start_date" type="date" readonly value="<%= empleado.start_date %>">
+              <input id="start_date" name="start_date" class="start_date" type="date" readonly value="<%= @empleado.start_date %>">
             </td>
             <td class="table-end-date">
-              <input id="end_date" name="end_date" class="end_date" type="date" readonly value="<%= empleado.end_date %>">
+              <input id="end_date" name="end_date" class="end_date" type="date" readonly value="<%= @empleado.end_date %>">
             </td>
             <td class="table-hour-rate">
-              <input id="hour_rate" name="hour_rate" class="hour_rate" type="number" readonly value="<%= empleado.hour_rate %>">
+              <input id="hour_rate" name="hour_rate" class="hour_rate" type="number" readonly value="<%= @empleado.hour_rate %>">
             </td>
             <td class="table-assigned-hours">
-              <input id="assigned_hours" name="assigned_hours" class="assigned_hours" type="number" readonly value="<%= empleado.assigned_hours %>">
+              <input id="assigned_hours" name="assigned_hours" class="assigned_hours" type="number" readonly value="<%= @empleado.assigned_hours %>">
             </td>
             <td class="table-comment">
-              <input id="comment" name="comment" class="comment-members" type="text" readonly value="<%= empleado.comment %>">
+              <input id="comment" name="comment" class="comment-members" type="text" readonly value="<%= @empleado.comment %>">
             </td>
             <td class="table-buttons">
               <span>
@@ -109,8 +111,24 @@
     $(document).find('.button-save').hide();
     
     
-    //TODO Actualmente se elimina correctamente de la tabla, pero falta eliminarlo de la BD (NO HACER POR AHORA)
+    //TODO Se elimina de la BD pero faltan chequear condiciones para que en realidad pueda hacerlo
     $(document).on('click', '.button-delete', function() {
+      var tr = $(this).closest('tr');
+      var employeeId = tr.find('#employeeId').val();
+      var projectId = tr.find('#projectId').val();
+    
+      $.ajax({
+        url: 'proforma/delete_project_assigned_user',
+        type: 'DELETE',
+        data: {employeeId:employeeId, projectId:projectId},
+        success: function(result) {
+          alert("Miembro eliminado con exito");
+        },
+        //Chequear que error quiero dar, si de conexion, o si puede ser que no encontro al miembro
+        error: function() {
+          alert("Error. Pruebe intentar nuevamente.");
+        },
+      });
       $(this).parents('tr').remove();
     });
     

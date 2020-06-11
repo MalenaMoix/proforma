@@ -14,9 +14,9 @@ class ProformaController < ApplicationController
 
     # Primer dia del mes actual
     fecha_comienzo_por_defecto = Date.today.at_beginning_of_month
-
     @employee = ProjectAssignedUser.new(:project_id => project_id, :user_id => user_selected[:id], :hour_rate => 0.0, :assigned_hours => 8, :start_date => fecha_comienzo_por_defecto)
 
+    
     if @employee.save
       flash.notice = "Miembro agregado al proyecto"
       redirect_to :back
@@ -43,28 +43,19 @@ class ProformaController < ApplicationController
     employee_to_update.comment = comment
 
     if employee_to_update.save
-      flash.notice = "Se agregaron los datos"
-      redirect_to :back
+      flash.notice = "Se guardaron los cambios"
     else
-      flash.alert = "Se produjo un error al intentar agregar los datos"
+      flash[:error] = "Se produjo un error al intentar guardar los cambios"
     end
+
+    redirect_to :back
   end
 
 
   def delete_project_assigned_user
-    puts "ENTRA AL METODO DELETE"
-
-    #@project_id = Project.find(params[:project_id])
-    # Eliminar completamente porque se puede agregar un miembro por confusion y se lo quiere sacar
-    #project_id = params[:project_id]
-    #user = params[:user]
-
-    # OPTIMIZE
-    #delimitador = " "
-    #nombre_apellido = user.split(delimitador)
-    #user_encontrado = User.where(:firstname => nombre_apellido[0], :lastname => nombre_apellido[1]).first
-
-    #ProjectAssignedUser.destroy(user_encontrado[:id])
+    project_id = params[:projectId]
+    employee_to_delete = params[:employeeId]
+    is_deleted = ProjectAssignedUser.where(project_id: project_id.to_i, user_id: employee_to_delete.to_i).last.delete
   end
 
 
@@ -213,15 +204,11 @@ class ProformaController < ApplicationController
     end
 
       
-    # BUG: cuando se agrega un miembro que ya estuvo anteriormente en el proyecto, se agrega con las horas que trabajo en el proyecto anteriormente
     pr_id = params[:project_id]
     resultUpdate = []
     resultInsert = []
     success_array = hours.map {|hour|
       date_time_new = DateTime.new(month_to_update.year, month_to_update.month, hour[:day]) 
-      member_in_project = ProjectAssignedUser.where(:project_id => pr_id, :user_id => hour[:user]).last
-      time_entry_member_in_project = TimeEntry.where(:project_id => pr_id, :user_id => hour[:user]).last
-      
       if date_time_new > block_date
         if (time_entry_old = record_exists?(date_time_new, hour[:user], pr_id))
           boolean_success = false

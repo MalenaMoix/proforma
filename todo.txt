@@ -41,8 +41,8 @@ PRIMERA DEMO
 //DONE Proforma basada en los nuevos miembros:
     //DONE Consultar los miembros del proyecto en el mes en curso
     //DONE Listarlos
-    //FIXME Traer los time entries actuales para esa persona
-    //FIXME Cuando agrego un miembro que estuvo anteriormente en el proyecto lo muestra con los time entries que tuvo en el pasado
+    //DONE (CREO) Traer los time entries actuales para esa persona
+    //DONE (CREO) Cuando agrego un miembro que estuvo anteriormente en el proyecto lo muestra con los time entries que tuvo en el pasado
     
     //TODO Para todos los time entries que no haya datos, que no sean ni sabado ni domingo ni feriado, rellenar con las horas dedicadas al proyecto. Las que se encuentran en la tabla manage members.
 
@@ -57,15 +57,23 @@ Bookmark Todas en 8 = javascript:$('td.working input').filter(function(i,e){ ret
 
 
 
-
-
-// TODO Activar el permiso para los non members del view planilla y change planilla (manual)
+// DONE en los members non admin mostrar los time entry del mes actual
 // DONE Si una perosna no esta en el proyecto que no pueda guardar horas
-
 // DONE Facturacion tab este protegido por un permiso view_facturacion que por defecto no lo tenga nadie
 
+// ALWAYS Activar el permiso para los non members del view planilla y change planilla (manual)
 
 
 
 // VER https://docs.docker.com/compose/rails/
 // VER https://medium.com/better-programming/docker-in-development-with-nodemon-d500366e74df
+
+
+
+
+
+
+
+Preguntas:
+    En el Save, Delete y Add esta bien que recargue la pagina? O es mas comodo que quede ahi en el modal nomas?
+    Condiciones a chequear antes de eliminar a un miembro?
