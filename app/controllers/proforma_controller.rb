@@ -55,7 +55,33 @@ class ProformaController < ApplicationController
   def delete_project_assigned_user
     project_id = params[:projectId]
     employee_to_delete = params[:employeeId]
-    is_deleted = ProjectAssignedUser.where(project_id: project_id.to_i, user_id: employee_to_delete.to_i).last.delete
+
+    time_entries = TimeEntry.where(project_id: project_id.to_i, user_id: employee_to_delete.to_i)
+    if time_entries.length > 0
+      hours = TimeEntry.where(project_id: project_id.to_i, user_id: employee_to_delete.to_i).sum(&:hours)
+      if hours > 0
+        message = "Este miembro tiene horas cargadas en el proyecto y no puede ser eliminado. Solo puede cambiarse su fecha de fin."
+        flash[:error] = "Este miembro tiene horas cargadas en el proyecto y no puede ser eliminado. Solo puede cambiarse su fecha de fin."
+      else
+        if ProjectAssignedUser.where(project_id: project_id.to_i, user_id: employee_to_delete.to_i).last.delete
+          message = "Miembro eliminado con exito!"
+          flash.notice = "Miembro eliminado con exito!"
+        else
+          message = "Error al intentar eliminar el miembro. Pruebe intentar nuevamente."
+          flash[:error] = "Error al intentar eliminar el miembro. Pruebe intentar nuevamente."
+        end
+      end
+    else
+      if ProjectAssignedUser.where(project_id: project_id.to_i, user_id: employee_to_delete.to_i).last.delete
+        message = "Miembro eliminado con exito!"
+        flash.notice = "Miembro eliminado con exito!"
+      else
+        message = "Error al intentar eliminar el miembro. Pruebe intentar nuevamente."
+        flash[:error] = "Error al intentar eliminar el miembro. Pruebe intentar nuevamente."
+      end
+    end
+
+    render json: {message: message}
   end
 
 
@@ -70,7 +96,8 @@ class ProformaController < ApplicationController
     get_employees
 
     current = User.current
-    if current.admin || has_role?(current, 'Jefe de proyecto')
+    #if current.admin || has_role?(current, 'Jefe de proyecto')
+    if current.admin || has_role?(current, 'Jefe de proyecto') || has_role?(current, 'Administrativo Facturacion')
       get_manager_index
     else
       get_dev_index(current)

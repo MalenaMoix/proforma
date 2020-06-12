@@ -6,7 +6,7 @@
 <% time_entry_activity = TimeEntryActivity.where(name: 'Timeoff')[0] %>
 <% arr_day_names = %w(L M M J V S D) %>
 <% first_day_name = Date.new(month_to_show.year, month_to_show.month, 1).wday %>
-<% has_role = User.current.admin || User.current.roles_for_project(@project).include?(Role.find_by(:name => 'Jefe de proyecto')) %>
+<% has_role = User.current.admin || User.current.roles_for_project(@project).include?(Role.find_by(:name => 'Jefe de proyecto')) || User.current.roles_for_project(@project).include?(Role.find_by(:name => 'Administrativo Facturacion')) %>
 <%
   def round_to_quarter (val)
     return (val * 4).round / 4.0

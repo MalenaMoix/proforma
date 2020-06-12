@@ -111,7 +111,7 @@
     $(document).find('.button-save').hide();
     
     
-    //TODO Se elimina de la BD pero faltan chequear condiciones para que en realidad pueda hacerlo
+    //DONE Pero se podria mejorar
     $(document).on('click', '.button-delete', function() {
       var tr = $(this).closest('tr');
       var employeeId = tr.find('#employeeId').val();
@@ -121,15 +121,18 @@
         url: 'proforma/delete_project_assigned_user',
         type: 'DELETE',
         data: {employeeId:employeeId, projectId:projectId},
-        success: function(result) {
-          alert("Miembro eliminado con exito");
-        },
-        //Chequear que error quiero dar, si de conexion, o si puede ser que no encontro al miembro
-        error: function() {
-          alert("Error. Pruebe intentar nuevamente.");
-        },
+      })
+      .done(function(message) {
+        var message = message.message;
+        //alert(message);
+      })
+      .fail(function(jqXHR, textStatus, error) {
+        alert("Status: " + textStatus + ". Error: " + error); 
       });
+
+      //TODO: solo eliminar si es exitoso el response del ajax
       $(this).parents('tr').remove();
+      location.reload();
     });
     
     

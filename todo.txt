@@ -1,12 +1,6 @@
-Cuando entras a proforma acordarse de tener el rol "Activo"
-
-// DONE En la tabla manage members: luego de hacer click en Cancel, y en esa misma row pongo Save, no se esta guardando
-// FIXME Chequear los TODO y OPTIMIZE comentados
-
-
+El rol "Activo" ya no se usa.
 
 PRIMERA DEMO
-
 // DONE En el select box insertar los usuarios con apellido nombre. Actualmente esta con nombre apellido.
 // DONE Ordenarlos alfabeticamente.
 
@@ -27,14 +21,11 @@ PRIMERA DEMO
 // DONE Si el campo Editable no esta en check:
     // DONE Calcular en UI el total, haciendo rate*horasTrabajadas
     // DONE Para calcular las horas trabajadas hacerlo en el BACK: seria un join entre las tablas User y Time Entry (lo hice en UI tambien no se si esta bien)
-
 (POR AHORA ESTO NO) El guardar de la facturacion debe guardar: el id de la persona, el log, la fecha en que se hizo, total
 
 
 // DONE Validar todos los campos de datos que pueda ingresar el usuario
 // DONE Hacer responsive las tablas (no hice nada creo que ya anda bien)
-
-
 
 
 
@@ -47,14 +38,9 @@ PRIMERA DEMO
     //TODO Para todos los time entries que no haya datos, que no sean ni sabado ni domingo ni feriado, rellenar con las horas dedicadas al proyecto. Las que se encuentran en la tabla manage members.
 
 
-// TODO Para el Delete:
-    //TODO Un alert si desea borrar
-    //TODO Un segundo alert para ver si la persona tiene time entries
-
-
-
-Bookmark Todas en 8 = javascript:$('td.working input').filter(function(i,e){ return e.value == ""}).val(8);
-
+// DONE Para el Delete:
+    //DONE Un alert si desea borrar
+    //DONE Un segundo alert para ver si la persona tiene time entries
 
 
 // DONE en los members non admin mostrar los time entry del mes actual
@@ -68,12 +54,19 @@ Bookmark Todas en 8 = javascript:$('td.working input').filter(function(i,e){ ret
 // VER https://docs.docker.com/compose/rails/
 // VER https://medium.com/better-programming/docker-in-development-with-nodemon-d500366e74df
 
-
-
+Bookmark Todas en 8 = javascript:$('td.working input').filter(function(i,e){ return e.value == ""}).val(8);
 
 
 
 
 Preguntas:
     En el Save, Delete y Add esta bien que recargue la pagina? O es mas comodo que quede ahi en el modal nomas?
-    Condiciones a chequear antes de eliminar a un miembro?
+        -Ver de hacer esto con ajax para que quede en la tabla manage members y no recargar la pagina
+
+
+    Condiciones a chequear antes de eliminar a un miembro:
+        // DONE -Solo se deberia eliminar si no tiene time entries-Es decir, si la suma de sus horas es 0 que si lo pueda borrar
+        // DONE -Si tiene time entries no se puede aliminar una persona que tenga horas cargadas en el proyecto, sino que se debe modificar su fecha de fin
+
+    Podemos hacer algun tipo de rol para Juan que tenga todos los permisos, y para mostrar la facturacion chequear si tiene ese rol
+        // DONE -Rol: "Administrativo Facturacion"
