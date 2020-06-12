@@ -127,13 +127,16 @@
         //alert(message);
       })
       .fail(function(jqXHR, textStatus, error) {
-        alert("Status: " + textStatus + ". Error: " + error); 
+        alert("Status: " + textStatus + ". Error: " + error);
       });
-
+    
       //TODO: solo eliminar si es exitoso el response del ajax
       $(this).parents('tr').remove();
       location.reload();
     });
+    
+    
+    //TODO: realizar el Save asincrono al igual que el Delete
     
     
     $(document).on('click', '.button-edit', function(event) {

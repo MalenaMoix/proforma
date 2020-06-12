@@ -26,6 +26,7 @@ class ProformaController < ApplicationController
   end
 
   
+  #TODO: hacer asincrono este metodo con ajax
   def update_project_assigned_user
     project_id = params[:project_id]
     user_id = params[:user_id]
@@ -49,6 +50,7 @@ class ProformaController < ApplicationController
     end
 
     redirect_to :back
+    #render json: {message: message}
   end
 
 
@@ -88,15 +90,12 @@ class ProformaController < ApplicationController
 
 
 
-
-
   # COMIENZO METODOS QUE YA ESTABAN EN PROFORMA
   def index
     # Metodo que carga los project_active_members segun su end_date y start_date a la tabla manage members
     get_employees
 
     current = User.current
-    #if current.admin || has_role?(current, 'Jefe de proyecto')
     if current.admin || has_role?(current, 'Jefe de proyecto') || has_role?(current, 'Administrativo Facturacion')
       get_manager_index
     else
@@ -107,9 +106,7 @@ class ProformaController < ApplicationController
 
   # CAMBIO ACA
   def get_dev_index(current)
-    # TODO: solo se le deberian mostrar los proyectos en los cuales es o fue miembro
-    # Ahora solo impide que ingrese horas en el proyecto si no es miembro
-    # Validar que sea miembro activo del proyecto
+    # Valida que sea miembro activo del proyecto e impedir que ingrese horas si no lo es
     current_member = ProjectAssignedUser.where(:user_id => current.id, :project_id => @project[:id]).last
     month_to_show = DateTime.new(DateTime.now.year, DateTime.now.month, 1)
 
@@ -131,7 +128,6 @@ class ProformaController < ApplicationController
     @months = TimeEntry.select('tyear, tmonth').where(:project_id => @project[:id]).group('tyear, tmonth')
     month_to_show = params[:month] ? DateTime.parse(params[:month]) : DateTime.new(DateTime.now.year, DateTime.now.month, 1)
 
-    #CAMBIO ACA
     ids_active_members = []
     @project_active_members.each do |member|
       ids_active_members.push member[:user_id]
@@ -145,7 +141,6 @@ class ProformaController < ApplicationController
     end
 
     #CAMBIO ACA
-    # Aca ver si es miembro permitido
     @proformas = @project_active_members
     @time_entries = TimeEntry.where(user_id: ids_active_members, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
   end
@@ -488,13 +483,13 @@ class ProformaController < ApplicationController
   end
 
 
-  # REVISAR METODO
+  # OPTIMIZE: tal vez se pueda mejorar la manera de hacer este metodo
   def search_users_no_members
     @users = User.all
     @all_project_members = ProjectAssignedUser.where(:project_id => @project[:id])
     actual_month = DateTime.now.month
     
-    # OPTIMIZE: tal vez se pueda mejor la manera de hacer esto
+    
     # IDs de todos los User
     ids_all_users = []
     for user_i in @users
