@@ -6,6 +6,18 @@ class CreateProjectAssignedUsers < ActiveRecord::Migration[5.2]
       t.float :hour_rate
       t.text :comment
       t.integer :assigned_hours
+      t.integer :total
+      t.text :log
+      t.string :user_name_modification
+      t.date :last_modification_date
+      t.text :other_amounts_comments
+      t.integer :other_amount_bill
+      t.text :general_comments
+      t.boolean :bloqueado
+      t.date :last_modification_date_bloqueado
+      t.text :user_name_last_mod
+      
+
 
       t.references :project, type: :integer, foreign_key: true
       t.references :user, type: :integer, foreign_key: true
