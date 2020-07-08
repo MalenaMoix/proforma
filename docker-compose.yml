@@ -20,7 +20,7 @@ services:
       - "redmine_data:/bitnami"
       #- "./volume:/bitnami/redmine"
       - ".:/bitnami/redmine/plugins/proforma"
-      - "./../facturacion_proyecto:/bitnami/redmine/plugins/facturacion_proyecto"
+      - "./../facturacion:/bitnami/redmine/plugins/facturacion_proyecto"
     depends_on:
       - mariadb
 volumes:

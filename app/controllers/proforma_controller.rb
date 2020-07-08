@@ -521,20 +521,34 @@ class ProformaController < ApplicationController
 
   def get_employees
     fecha = params[:month] ? DateTime.parse(params[:month]) : DateTime.new(DateTime.now.year, DateTime.now.month, 1)
+    fecha_today = Date.today
+
     
     @all_project_members = ProjectAssignedUser.where(:project_id => @project[:id])
     @project_active_members = []
-
+    puts "FECHA get employees"
+    puts fecha
+    puts fecha.strftime("%Y%m") 
     @all_project_members.each_with_index do |emp, index|
-      if !emp.end_date
-        if emp.start_date <= fecha
-          @project_active_members.push(emp)
-        end
-      else
-        if (emp.start_date <= fecha) && emp.end_date > fecha
-          @project_active_members.push(emp)
-        end
+    
+    puts "name"
+    puts emp.user
+    puts "emp.start_date"
+    puts emp.start_date
+    puts "emp.end_date"
+    puts emp.end_date
+    puts '---------------'
+
+    if emp.end_date #if date_end is not null
+      if (emp.start_date.strftime("%Y%m") <= fecha.strftime("%Y%m")) && emp.end_date.strftime("%Y%m") >= fecha.strftime("%Y%m")
+        @project_active_members.push(emp)
+      end
+    else #if date_end is null
+      if emp.start_date.strftime("%Y%m") <= fecha.strftime("%Y%m")
+        @project_active_members.push(emp)
       end
     end
+    end
+
   end
 end

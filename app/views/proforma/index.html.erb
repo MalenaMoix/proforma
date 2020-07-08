@@ -116,7 +116,7 @@
         <!-- populates the proforma with the current members and the hours that they have pre charged -->
         <tbody>
         <% @proformas.each do |proforma| %>
-            <tr>
+            <tr class='data'>
                 <%= hidden_field_tag(:user, proforma[:user_id]) %>
                 <%= hidden_field_tag(:month, params[:month]) %>
                 <td class="person"><%= proforma.user %> </td>
@@ -131,17 +131,50 @@
                           is_activity_timeoff = var1 ? var1[:activity_id] == time_entry_activity[:id] : false
                         end
                     %>
-                    <td class="<%= ((date_time_new.saturday? || date_time_new.sunday? || holidays.include?(date_time_new.strftime('%Y-%m-%d'))) ?
+
+                    <% 
+                    puts 'aca proforma'
+                    puts proforma.start_date
+                    puts proforma.end_date
+                    if !proforma.end_date#if fecha end is null I set infinite (only for render) becuase between not accept nil
+                      puts 'vaciooooooooooooooooooooooooooooooooooooooo'
+                      inf_end_datetime = DateTime.new(2100,12,31,0)
+                    else
+                      inf_end_datetime = proforma.end_date
+                    end
+                    puts date_time_new
+                    puts '------------'
+                    %>
+                    <td class="<%= ( ( ( date_time_new.saturday? || date_time_new.sunday? || holidays.include?(date_time_new.strftime('%Y-%m-%d') ) ) && (date_time_new.between?(proforma.start_date,inf_end_datetime) )  ) ?
                             'non-working' :
-                            (is_activity_timeoff ? 'activity-timeoff' : 'working')) %> <%= (date_time_new <= blocked_until)?'disabled':'enabled' %>" >
+                            (is_activity_timeoff ? 'activity-timeoff' : 
+                              !(date_time_new.between?(proforma.start_date,inf_end_datetime))? 'non-workings'
+                                : 'working'
+
+                              )
+                            )
+                             %>"
+
+                        id="<%= ( ( ( date_time_new.saturday? || date_time_new.sunday? || holidays.include?(date_time_new.strftime('%Y-%m-%d') ) ) && (date_time_new.between?(proforma.start_date,inf_end_datetime) )  ) ?
+                            'non-working' :
+                            (is_activity_timeoff ? 'activity-timeoff' : 
+                              !(date_time_new.between?(proforma.start_date,inf_end_datetime))? 'non-workings'
+                                : 'working'
+
+                              )
+                            )
+                             %>"
+                             
+                             
+                            <%= !(date_time_new.between?(proforma.start_date,inf_end_datetime))?'disabled':'enabled' %>" >
 
                         <div class="input-wrapper">
                             <%= # noinspection RubyNestedTernaryOperatorsInspection
                                 # CAMBIO ACA: bloqueo de campos para que no pueda ingresar horas si no es miembro del proyecto. Agregado de condicion en el disabled
-                                text_field_tag("day[#{proforma[:user_id]}][#{d}][hours]",
+                                 text_field_tag("day[#{proforma[:user_id]}][#{d}][hours]",
                                                var1 ? (round_to_quarter(var1[:hours]) != 0 ? round_to_quarter(var1[:hours]) : nil) : nil,
-                                               maxlength: 5, group: proforma[:user_id], disabled: date_time_new <= blocked_until || !@time_entries) %>
-
+                                               maxlength: 5, group: proforma[:user_id], disabled: date_time_new <= blocked_until || !@time_entries || !date_time_new.between?(proforma.start_date,inf_end_datetime) ) %>
+                                                
 
                             <%= hidden_field_tag("day[#{proforma[:user_id]}][#{d}][activityId]", is_activity_timeoff ? time_entry_activity[:id] : nil) %>
                         </div>
@@ -243,7 +276,13 @@
                 initInputBindings();
                 initTooltipBindings();
                 initCommentsTable();
-            
+
+
+                $("input[id$='_hours']").each(function (i, el) {
+                    console.log('hours');
+                });
+                $("td[id*=td]").attr('data-disabled', 'true');
+                $("input[id$='']").attr('disabled', 'true');
             
                 //$('#comments-table').parent().css('width', $('.proforma-entry').css('width'));
             
