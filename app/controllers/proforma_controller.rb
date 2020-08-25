@@ -203,7 +203,12 @@ class ProformaController < ApplicationController
     params['day'].each do |id_user|
       # id_user[0] -> user id
       # id_user[1] -> proforma_table_row
+      puts '----------------'
+      puts 'id_user'
+      puts id_user
+      puts '------------------------'
       id_user[1].each do |proforma_table_row|
+        
         # proforma_table_row[0] -> day
         # proforma_table_row[1][:hours] -> hours spent
         # proforma_table_row[1][:comment] -> comment
@@ -224,11 +229,12 @@ class ProformaController < ApplicationController
         end
       end
     end
-
       
     pr_id = params[:project_id]
     resultUpdate = []
     resultInsert = []
+    puts 'MONTHHH TOOO UPDATEEE'
+    puts month_to_update
     success_array = hours.map {|hour|
       date_time_new = DateTime.new(month_to_update.year, month_to_update.month, hour[:day]) 
       if date_time_new > block_date
@@ -266,7 +272,7 @@ class ProformaController < ApplicationController
         true
       end
     }
-
+    puts "ACAAAAAAAAAAAAAAAAAA"
     blocked_feedback = block_date >= DateTime.new(month_to_update.year, month_to_update.month, -1)
     @issue = Issue.new
     if !params[:proforma_seguimiento].blank? && !blocked_feedback && (User.current.admin || has_role?(User.current, 'Jefe de proyecto'))
@@ -351,10 +357,10 @@ class ProformaController < ApplicationController
     @pdf.set_author(User.current)
     # @pdf.set_header_data("#{File.join(Rails.root.to_s, 'public')}/images/folder-it-logo-header-blog.png", 20,
     #                      'folder_image', "first row\nsecond row\nthird row")
-    @pdf.set_margins(15, 27, 15)
+    @pdf.set_margins(5, 27, 5)
     @pdf.set_auto_page_break(true, 25)
     @pdf.set_font('', 'B', 7)
-    # @pdf.set_image_scale(4); #set image scale factor
+    @pdf.set_image_scale(4); #set image scale factor
     @pdf.alias_nb_pages
     @pdf.add_page
 

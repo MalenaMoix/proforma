@@ -16,6 +16,7 @@ class CreateProjectAssignedUsers < ActiveRecord::Migration[5.2]
       t.boolean :bloqueado
       t.date :last_modification_date_bloqueado
       t.text :user_name_last_mod
+      t.date :last_date_modification
       
 
 

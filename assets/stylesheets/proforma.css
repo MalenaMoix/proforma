@@ -117,12 +117,14 @@ textarea {
 
 .proforma-plugin td.working input,
 .proforma-plugin td.non-working input,
+.proforma-plugin td.non-workings input,
 .proforma-plugin td.activity-timeoff input {
     border: none;
     background-color: transparent;
 }
 
 .proforma-plugin td.non-working,
+.proforma-plugin td.non-workings,
 .proforma-plugin td.activity-timeoff {
     background-color: #ccc;
 }

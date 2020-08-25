@@ -55,10 +55,10 @@
         <%= form_tag(action: 'block_proforma') do %>
           <%= hidden_field_tag(:project_id, @project[:id]) %>
           <label for="datepicker">
-            Bloquear proformas hasta
+            Proformas verificadas hasta
           </label>
           <input type="text" id="datepicker" autocomplete="off" value="<%= blocked_until.strftime('%Y-%m-%d') %>" />
-          <%= submit_tag('Bloquear') %>
+          <%= submit_tag('Verificar') %>
         <% end %>
       </div>
     <% end %>
@@ -133,17 +133,12 @@
                     %>
 
                     <% 
-                    puts 'aca proforma'
-                    puts proforma.start_date
-                    puts proforma.end_date
                     if !proforma.end_date#if fecha end is null I set infinite (only for render) becuase between not accept nil
-                      puts 'vaciooooooooooooooooooooooooooooooooooooooo'
-                      inf_end_datetime = DateTime.new(2100,12,31,0)
+                      inf_end_datetime = DateTime.new(2050,12,31,0)
                     else
                       inf_end_datetime = proforma.end_date
                     end
-                    puts date_time_new
-                    puts '------------'
+          
                     %>
                     <td class="<%= ( ( ( date_time_new.saturday? || date_time_new.sunday? || holidays.include?(date_time_new.strftime('%Y-%m-%d') ) ) && (date_time_new.between?(proforma.start_date,inf_end_datetime) )  ) ?
                             'non-working' :

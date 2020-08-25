@@ -8,6 +8,7 @@ services:
       - MARIADB_DATABASE=bitnami_redmine
     volumes:
       - "mariadb_data:/bitnami"
+      - "./../databasedump:/bitnami/databasedump"
   redmine:
     #image: "bitnami/redmine:4"
     build: .
