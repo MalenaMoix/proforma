@@ -3,7 +3,7 @@
 </div>
 <!-- Stylesheet -->
 <% content_for :header_tags do %>
-  <%= stylesheet_link_tag 'manage_members', :plugin => 'proforma', media: 'all' %>
+  <%= stylesheet_link_tag 'manage_members', :plugin => 'proformanext', media: 'all' %>
 <% end %>
 <!-- Select box users -->
 <div class="select-user">
@@ -32,7 +32,7 @@
       </thead>
       <% for @empleado in @project_active_members %>
         <tr class="row-data">
-          <%= form_with(url: "proforma/update_project_assigned_user", method: "put") do %>
+          <%= form_with(url: "proformanext/update_project_assigned_user", method: "put") do %>
             <%= hidden_field_tag(:project_id, @project[:id]) %>
             <%= hidden_field_tag(:user_id, @empleado.user.id) %>
             <input type="hidden" id="employeeId" name="employeeId" value="<%= @empleado.user.id %>">
@@ -104,7 +104,7 @@
     </table>
   </div>
   <!-- Manejo del contenido editable de la tabla -->
-  <!-- <%= javascript_include_tag 'manage_members', :plugin => 'proforma' %> -->
+  <!-- <%= javascript_include_tag 'manage_members', :plugin => 'proformanext' %> -->
   <script>
     $(document).find('.button-cancel').hide();
     $(document).find('.button-delete').hide();
@@ -118,7 +118,7 @@
       var projectId = tr.find('#projectId').val();
     
       $.ajax({
-        url: 'proforma/delete_project_assigned_user',
+        url: 'proformanext/delete_project_assigned_user',
         type: 'DELETE',
         data: {employeeId:employeeId, projectId:projectId},
       })

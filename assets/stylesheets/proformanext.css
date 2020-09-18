@@ -31,33 +31,33 @@ textarea {
     line-height: 0;
 }
 
-.proforma-folder-logo img {
+.proformanext-folder-logo img {
     width: 40%;
 }
 
 
 /* PROFORMA TABLE */
 
-.proforma-plugin thead tr {
+.proformanext-plugin thead tr {
     background-color: #783d64;
     color: white;
 }
 
-.proforma-plugin table {
+.proformanext-plugin table {
     padding: 0;
     border-collapse: collapse;
     border: 1px solid grey;
 }
 
-.proforma-plugin table tr {
+.proformanext-plugin table tr {
     border: 1px solid grey;
 }
 
-.proforma-plugin .proforma-blocker {
+.proformanext-plugin .proformanext-blocker {
     margin-right: 220px;
 }
 
-.proforma-plugin td {
+.proformanext-plugin td {
     border: 1px solid grey;
     text-align: center;
     padding: 0;
@@ -69,17 +69,17 @@ textarea {
     height: 18px;
 }
 
-.proforma-plugin th {
+.proformanext-plugin th {
     padding: 0px 2px !important;
     margin: 0px !important;
 }
 
-.proforma-plugin td.disabled input {
+.proformanext-plugin td.disabled input {
     color: grey;
     font-style: italic;
 }
 
-.proforma-plugin input[type="text"] {
+.proformanext-plugin input[type="text"] {
     text-align: center;
     font-size: 9pt;
     padding: 0 !important;
@@ -88,21 +88,21 @@ textarea {
 }
 
 @media (max-width: 1380px) {
-    .proforma-plugin input[type="text"] {
+    .proformanext-plugin input[type="text"] {
         font-size: 8.4pt;
     }
-    .proforma-plugin td {
+    .proformanext-plugin td {
         width: 28px;
     }
 }
 
 @media (max-width: 1340px) {
-    .proforma-plugin input[type="text"] {
+    .proformanext-plugin input[type="text"] {
         font-size: 7pt;
     }
 }
 
-.proforma-plugin td input {
+.proformanext-plugin td input {
     width: 100% !important;
 }
 
@@ -110,27 +110,27 @@ textarea {
     width: auto !important;
 }
 
-.proforma-plugin td.person {
+.proformanext-plugin td.person {
     text-align: left;
     width: 160px !important;
 }
 
-.proforma-plugin td.working input,
-.proforma-plugin td.non-working input,
-.proforma-plugin td.non-workings input,
-.proforma-plugin td.activity-timeoff input {
+.proformanext-plugin td.working input,
+.proformanext-plugin td.non-working input,
+.proformanext-plugin td.non-workings input,
+.proformanext-plugin td.activity-timeoff input {
     border: none;
     background-color: transparent;
 }
 
-.proforma-plugin td.non-working,
-.proforma-plugin td.non-workings,
-.proforma-plugin td.activity-timeoff {
+.proformanext-plugin td.non-working,
+.proformanext-plugin td.non-workings,
+.proformanext-plugin td.activity-timeoff {
     background-color: #ccc;
 }
 
 @media print {
-    .proforma-folder-logo {
+    .proformanext-folder-logo {
         text-align: center;
     }
     div.doc-meta {
@@ -149,30 +149,30 @@ textarea {
         font-weight: normal;
         font-size: 11pt;
     }
-    .proforma-plugin input[type="submit"] {
+    .proformanext-plugin input[type="submit"] {
         display: none !important;
     }
     input[disabled] {
         background-color: transparent !important;
         color: #000 !important;
     }
-    .proforma-plugin td input {
+    .proformanext-plugin td input {
         width: 100% !important;
         font-style: normal !important;
         color: #000 !important;
     }
-    .proforma-plugin td.person {
+    .proformanext-plugin td.person {
         text-align: left;
         width: 160px !important;
     }
-    .proforma-plugin td.non-working,
-    .proforma-plugin td.activity-timeoff {
+    .proformanext-plugin td.non-working,
+    .proformanext-plugin td.activity-timeoff {
         background-color: #ccc;
     }
-    .proforma-plugin .proforma-blocker {
+    .proformanext-plugin .proformanext-blocker {
         display: none;
     }
-    .proforma-plugin select#month {
+    .proformanext-plugin select#month {
         display: none;
     }
     .comment-tooltip {
@@ -187,11 +187,11 @@ textarea {
     #export_pdf {
         display: none;
     }
-    table.proforma-entry,
+    table.proformanext-entry,
     table#comments-table,
     table.comments-table,
     table#holidays-table,
-    p.proforma_seguimiento {
+    p.proformanext_seguimiento {
         margin: auto;
         width: 1165px !important;
     }
@@ -207,11 +207,11 @@ textarea {
     display: none;
 }
 
-p.proforma_seguimiento {
+p.proformanext_seguimiento {
     width: 1165px !important;
 }
 
-textarea.proforma_seguimiento {
+textarea.proformanext_seguimiento {
     width: 1159px;
     border: 1px solid grey;
     height: 4rem;

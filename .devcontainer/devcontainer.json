@@ -2,7 +2,7 @@
   "name": "Proforma",
   "dockerComposeFile": "../docker-compose.yml",
   "service": "redmine",
-  "workspaceFolder": "/opt/bitnami/redmine/plugins/proforma",
+  "workspaceFolder": "/opt/bitnami/redmine/plugins/proformanext",
   "shutdownAction": "stopCompose",
   "settings": {},
 

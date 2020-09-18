@@ -13,16 +13,16 @@
   end
 %>
 <% content_for :header_tags do %>
-  <%= stylesheet_link_tag 'proforma', :plugin => 'proforma', media: 'all' %>
+  <%= stylesheet_link_tag 'proformanext', :plugin => 'proformanext', media: 'all' %>
 <% end %>
-<div class="proforma-plugin">
+<div class="proformanext-plugin">
   <h2>Proforma  <%= @project %></h2>
   <% if has_role %>
     <button class="manage-members" id="button" style="vertical-align:middle"><span>Manage members </span></button>
   <% end %>
   <%
        feriadoStr = 'feriados'
-       var0 = Setting.plugin_proforma[feriadoStr]
+       var0 = Setting.plugin_proformanext[feriadoStr]
        prev_holidays = var0 ? var0.split(',') : []
 
        if prev_holidays
@@ -41,7 +41,7 @@
          holidays = []
        end
     %>
-  <% var2 = Setting.plugin_proforma['block_'+@project[:id].to_s+'']
+  <% var2 = Setting.plugin_proformanext['block_'+@project[:id].to_s+'']
        blocked_until = var2.to_s.strip.empty? ? DateTime.new(2014, 1, 1) : DateTime.strptime(var2, '%Y-%m-%d') %>
   <div style="text-align: right;">
     <span>
@@ -51,8 +51,8 @@
     </span>
     <% if has_role %>
       <input type="text" name="invisibleInputText" type="hidden" autofocus="true" style="display: none;">
-      <div class="proforma-blocker">
-        <%= form_tag(action: 'block_proforma') do %>
+      <div class="proformanext-blocker">
+        <%= form_tag(action: 'block_proformanext') do %>
           <%= hidden_field_tag(:project_id, @project[:id]) %>
           <label for="datepicker">
             Proformas verificadas hasta
@@ -63,8 +63,8 @@
       </div>
     <% end %>
   </div>
-  <div class="proforma-folder-logo">
-    <%= image_tag('folder-it-logo-header-blog.png', :plugin => 'proforma') %>
+  <div class="proformanext-folder-logo">
+    <%= image_tag('folder-it-logo-header-blog.png', :plugin => 'proformanext') %>
   </div>
   <% if has_role %>
     <div class="doc-meta">
@@ -88,7 +88,7 @@
     <% html_title ('R-P3-1_Proforma_Staff_Augmentation_-_' + @project.to_s + '-' + month_to_show.strftime('%Y-%m')) %>
     <%= form_tag(action: 'update_hours') do %>
     <%= hidden_field_tag(:project_id, @project[:id]) %>
-    <table class="proforma-entry">
+    <table class="proformanext-entry">
         <thead>
         <!-- create the bar for the days initials letter of the month-->
         <tr>
@@ -113,47 +113,47 @@
         </tr>
         </thead>
 
-        <!-- populates the proforma with the current members and the hours that they have pre charged -->
+        <!-- populates the proformanext with the current members and the hours that they have pre charged -->
         <tbody>
-        <% @proformas.each do |proforma| %>
+        <% @proformanexts.each do |proformanext| %>
             <tr class='data'>
-                <%= hidden_field_tag(:user, proforma[:user_id]) %>
+                <%= hidden_field_tag(:user, proformanext[:user_id]) %>
                 <%= hidden_field_tag(:month, params[:month]) %>
-                <td class="person"><%= proforma.user %> </td>
+                <td class="person"><%= proformanext.user %> </td>
                 <% (1..this_month_days).to_a.each do |d| %>
                     <%
                       # CAMBIO ACA
                        date_time_new = DateTime.new(month_to_show.year, month_to_show.month, d)
-                       #var1 = @time_entries.where(:spent_on => date_time_new, :user_id => proforma[:user_id], :project_id => @project[:id])[0]
+                       #var1 = @time_entries.where(:spent_on => date_time_new, :user_id => proformanext[:user_id], :project_id => @project[:id])[0]
                        #is_activity_timeoff = var1 ? var1[:activity_id] == time_entry_activity[:id] : false
                         if @time_entries
-                          var1 = @time_entries.where(:spent_on => date_time_new, :user_id => proforma[:user_id], :project_id => @project[:id])[0]
+                          var1 = @time_entries.where(:spent_on => date_time_new, :user_id => proformanext[:user_id], :project_id => @project[:id])[0]
                           is_activity_timeoff = var1 ? var1[:activity_id] == time_entry_activity[:id] : false
                         end
                     %>
 
                     <% 
-                    if !proforma.end_date#if fecha end is null I set infinite (only for render) becuase between not accept nil
+                    if !proformanext.end_date#if fecha end is null I set infinite (only for render) becuase between not accept nil
                       inf_end_datetime = DateTime.new(2050,12,31,0)
                     else
-                      inf_end_datetime = proforma.end_date
+                      inf_end_datetime = proformanext.end_date
                     end
           
                     %>
-                    <td class="<%= ( ( ( date_time_new.saturday? || date_time_new.sunday? || holidays.include?(date_time_new.strftime('%Y-%m-%d') ) ) && (date_time_new.between?(proforma.start_date,inf_end_datetime) )  ) ?
+                    <td class="<%= ( ( ( date_time_new.saturday? || date_time_new.sunday? || holidays.include?(date_time_new.strftime('%Y-%m-%d') ) ) && (date_time_new.between?(proformanext.start_date,inf_end_datetime) )  ) ?
                             'non-working' :
                             (is_activity_timeoff ? 'activity-timeoff' : 
-                              !(date_time_new.between?(proforma.start_date,inf_end_datetime))? 'non-workings'
+                              !(date_time_new.between?(proformanext.start_date,inf_end_datetime))? 'non-workings'
                                 : 'working'
 
                               )
                             )
                              %>"
 
-                        id="<%= ( ( ( date_time_new.saturday? || date_time_new.sunday? || holidays.include?(date_time_new.strftime('%Y-%m-%d') ) ) && (date_time_new.between?(proforma.start_date,inf_end_datetime) )  ) ?
+                        id="<%= ( ( ( date_time_new.saturday? || date_time_new.sunday? || holidays.include?(date_time_new.strftime('%Y-%m-%d') ) ) && (date_time_new.between?(proformanext.start_date,inf_end_datetime) )  ) ?
                             'non-working' :
                             (is_activity_timeoff ? 'activity-timeoff' : 
-                              !(date_time_new.between?(proforma.start_date,inf_end_datetime))? 'non-workings'
+                              !(date_time_new.between?(proformanext.start_date,inf_end_datetime))? 'non-workings'
                                 : 'working'
 
                               )
@@ -161,17 +161,17 @@
                              %>"
                              
                              
-                            <%= !(date_time_new.between?(proforma.start_date,inf_end_datetime))?'disabled':'enabled' %>" >
+                            <%= !(date_time_new.between?(proformanext.start_date,inf_end_datetime))?'disabled':'enabled' %>" >
 
                         <div class="input-wrapper">
                             <%= # noinspection RubyNestedTernaryOperatorsInspection
                                 # CAMBIO ACA: bloqueo de campos para que no pueda ingresar horas si no es miembro del proyecto. Agregado de condicion en el disabled
-                                 text_field_tag("day[#{proforma[:user_id]}][#{d}][hours]",
+                                 text_field_tag("day[#{proformanext[:user_id]}][#{d}][hours]",
                                                var1 ? (round_to_quarter(var1[:hours]) != 0 ? round_to_quarter(var1[:hours]) : nil) : nil,
-                                               maxlength: 5, group: proforma[:user_id], disabled: date_time_new <= blocked_until || !@time_entries || !date_time_new.between?(proforma.start_date,inf_end_datetime) ) %>
+                                               maxlength: 5, group: proformanext[:user_id], disabled: date_time_new <= blocked_until || !@time_entries || !date_time_new.between?(proformanext.start_date,inf_end_datetime) ) %>
                                                 
 
-                            <%= hidden_field_tag("day[#{proforma[:user_id]}][#{d}][activityId]", is_activity_timeoff ? time_entry_activity[:id] : nil) %>
+                            <%= hidden_field_tag("day[#{proformanext[:user_id]}][#{d}][activityId]", is_activity_timeoff ? time_entry_activity[:id] : nil) %>
                         </div>
 
                     </td>
@@ -180,9 +180,9 @@
                         <br/>
 
 
-                    <textarea name="<%= "day[#{proforma[:user_id]}][#{d}][comment]" %>"
-                              id="<%= "day_#{proforma[:user_id]}_#{d}_comment" %>" maxlength="100"
-                              data-person="<%= proforma.user %>"
+                    <textarea name="<%= "day[#{proformanext[:user_id]}][#{d}][comment]" %>"
+                              id="<%= "day_#{proformanext[:user_id]}_#{d}_comment" %>" maxlength="100"
+                              data-person="<%= proformanext.user %>"
                               data-day="<%= d %>" cols="30"
                               rows="4"
                     ><%=
@@ -194,9 +194,9 @@
                     </div>
 
                 <% end %>
-                <td id='<%= proforma[:user_id] %>'></td>
-                <td id="working_<%= proforma[:user_id] %>" class="horas-habiles"></td>
-                <td id="extra_<%= proforma[:user_id] %>" class="horas-diff"></td>
+                <td id='<%= proformanext[:user_id] %>'></td>
+                <td id="working_<%= proformanext[:user_id] %>" class="horas-habiles"></td>
+                <td id="extra_<%= proformanext[:user_id] %>" class="horas-diff"></td>
             </tr>
         <% end %>
         </tbody>
@@ -219,8 +219,8 @@
          blocked_feedback = blocked_until >= DateTime.new(month_to_show.year, month_to_show.month, -1)
     %>
 
-        <p class="proforma_seguimiento"><span>Satisfacción del cliente</span>
-            <textarea class="proforma_seguimiento" name="proforma_seguimiento" id="proforma_seguimiento" <% if blocked_feedback %> disabled="disabled" <% end %> ><%= @issue_seguimiento? @issue_seguimiento.description : "" %></textarea>
+        <p class="proformanext_seguimiento"><span>Satisfacción del cliente</span>
+            <textarea class="proformanext_seguimiento" name="proformanext_seguimiento" id="proformanext_seguimiento" <% if blocked_feedback %> disabled="disabled" <% end %> ><%= @issue_seguimiento? @issue_seguimiento.description : "" %></textarea>
         </p>
         <br/>
 
@@ -261,7 +261,7 @@
           <script>
             $(document).ready(function () {
                 //---init
-                <% @proformas.each do |p| %>
+                <% @proformanexts.each do |p| %>
                 computeTotal('<%= p[:user_id] %>');
                 <% end %>
                 <% if has_role %>
@@ -279,7 +279,7 @@
                 $("td[id*=td]").attr('data-disabled', 'true');
                 $("input[id$='']").attr('disabled', 'true');
             
-                //$('#comments-table').parent().css('width', $('.proforma-entry').css('width'));
+                //$('#comments-table').parent().css('width', $('.proformanext-entry').css('width'));
             
                 $("#export_pdf").bind("click", function (e) {
                     // I don't want the href to be seen
@@ -381,7 +381,7 @@
                             var splitted = this.id.split("_");
                             var userid = splitted[1];
                             var day = splitted[2];
-                            var rows = $(".proforma-entry").find("tbody > tr");
+                            var rows = $(".proformanext-entry").find("tbody > tr");
                             for(var item in rows){
                                 if(isNaN(parseInt(item))){
                                     continue;

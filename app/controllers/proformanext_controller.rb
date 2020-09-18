@@ -1,8 +1,8 @@
-class ProformaController < ApplicationController
+class ProformanextController < ApplicationController
   unloadable
 
   # noinspection RubyResolve
-  before_action :find_project, :authorize, :only => [:index, :block_proforma, :update_hours]
+  before_action :find_project, :authorize, :only => [:index, :block_proformanext, :update_hours]
 
 
   # NUEVOS METODOS
@@ -112,10 +112,10 @@ class ProformaController < ApplicationController
 
     if current_member
       if !current_member.end_date || current_member.end_date >= month_to_show
-        @proformas = [current_member]
+        @proformanexts = [current_member]
         @time_entries = TimeEntry.where(:user_id => current_member.user.id, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
       else
-        @proformas = [current_member]
+        @proformanexts = [current_member]
         flash[:error] = "Usted no es miembro del proyecto actualmente"
       end
     else
@@ -133,7 +133,7 @@ class ProformaController < ApplicationController
       ids_active_members.push member[:user_id]
     end
 
-    settings = Setting.plugin_proforma['block_'+params[:project_id]+'']
+    settings = Setting.plugin_proformanext['block_'+params[:project_id]+'']
     if settings
       block_date = DateTime.strptime(settings, '%Y-%m-%d')
     else
@@ -141,7 +141,7 @@ class ProformaController < ApplicationController
     end
 
     #CAMBIO ACA
-    @proformas = @project_active_members
+    @proformanexts = @project_active_members
     @time_entries = TimeEntry.where(user_id: ids_active_members, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
   end
 
@@ -151,7 +151,7 @@ class ProformaController < ApplicationController
     month_to_show = params[:month] ? DateTime.parse(params[:month]) : DateTime.now
     #CAMBIO ACA
     get_employees
-    @proformas = @project_active_members
+    @proformanexts = @project_active_members
     @time_entries = TimeEntry.where(:tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => @project[:id])
   end
 
@@ -174,7 +174,7 @@ class ProformaController < ApplicationController
 
 
   def new
-    @proforma = Proforma.new
+    @proformanext = Proformanext.new
   end
 
 
@@ -190,7 +190,7 @@ class ProformaController < ApplicationController
       end
     end
     # noinspection RubyResolve
-    settings = Setting.plugin_proforma['block_'+params[:project_id]+'']
+    settings = Setting.plugin_proformanext['block_'+params[:project_id]+'']
     if settings
       block_date = DateTime.strptime(settings, '%Y-%m-%d')
     else
@@ -202,30 +202,30 @@ class ProformaController < ApplicationController
     # params['day'] -> {"user_id"=>{dia1=>{comment, hours, activityid}, ...}, ...}
     params['day'].each do |id_user|
       # id_user[0] -> user id
-      # id_user[1] -> proforma_table_row
+      # id_user[1] -> proformanext_table_row
       puts '----------------'
       puts 'id_user'
       puts id_user
       puts '------------------------'
-      id_user[1].each do |proforma_table_row|
+      id_user[1].each do |proformanext_table_row|
         
-        # proforma_table_row[0] -> day
-        # proforma_table_row[1][:hours] -> hours spent
-        # proforma_table_row[1][:comment] -> comment
-        # proforma_table_row[1][:activityId] -> activity_id
+        # proformanext_table_row[0] -> day
+        # proformanext_table_row[1][:hours] -> hours spent
+        # proformanext_table_row[1][:comment] -> comment
+        # proformanext_table_row[1][:activityId] -> activity_id
         # strip! returns nil if there is no text to trim...
-        if proforma_table_row[1][:hours] && round_to_quarter(proforma_table_row[1][:hours]) >= 0 && round_to_quarter(proforma_table_row[1][:hours]) <= 24
-          comment = proforma_table_row[1][:comment]
+        if proformanext_table_row[1][:hours] && round_to_quarter(proformanext_table_row[1][:hours]) >= 0 && round_to_quarter(proformanext_table_row[1][:hours]) <= 24
+          comment = proformanext_table_row[1][:comment]
           strip = comment ? comment.strip! : ''
 
-          activity = if (User.current.admin || has_role?(User.current, 'Jefe de proyecto')) && proforma_table_row[1][:activityId]
-                       proforma_table_row[1][:activityId].length > 0 ? proforma_table_row[1][:activityId] : nil
+          activity = if (User.current.admin || has_role?(User.current, 'Jefe de proyecto')) && proformanext_table_row[1][:activityId]
+                       proformanext_table_row[1][:activityId].length > 0 ? proformanext_table_row[1][:activityId] : nil
                      else
                        nil
                      end
-          hours.push({:time => round_to_quarter(proforma_table_row[1][:hours]),
+          hours.push({:time => round_to_quarter(proformanext_table_row[1][:hours]),
                       :comments => strip ? strip : comment,
-                      :day => proforma_table_row[0].to_i, :user => id_user[0], :activity_id => activity})
+                      :day => proformanext_table_row[0].to_i, :user => id_user[0], :activity_id => activity})
         end
       end
     end
@@ -275,7 +275,7 @@ class ProformaController < ApplicationController
     puts "ACAAAAAAAAAAAAAAAAAA"
     blocked_feedback = block_date >= DateTime.new(month_to_update.year, month_to_update.month, -1)
     @issue = Issue.new
-    if !params[:proforma_seguimiento].blank? && !blocked_feedback && (User.current.admin || has_role?(User.current, 'Jefe de proyecto'))
+    if !params[:proformanext_seguimiento].blank? && !blocked_feedback && (User.current.admin || has_role?(User.current, 'Jefe de proyecto'))
       issue_month_to_update = DateTime.new(month_to_update.year, month_to_update.month, 1)
       @issue = Issue.where(:tracker_id => Tracker.where(:name => "Seguimiento")[0].id,
                            :project_id => pr_id,
@@ -284,13 +284,13 @@ class ProformaController < ApplicationController
       if @issue && @issue[0]
         @issue = @issue[0]
         @issue.subject = "Seguimiento " + issue_month_to_update.strftime('%Y-%m-%d')
-        @issue.description = params[:proforma_seguimiento]
+        @issue.description = params[:proformanext_seguimiento]
         @issue.start_date = issue_month_to_update
       else
         @issue = Issue.new
         @issue.project_id = pr_id
         @issue.subject = "Seguimiento " + issue_month_to_update.strftime('%Y-%m-%d')
-        @issue.description = params[:proforma_seguimiento]
+        @issue.description = params[:proformanext_seguimiento]
         @issue.start_date = issue_month_to_update
         @issue.tracker_id = Tracker.where(:name => "Seguimiento")[0].id
         @issue.due_date = issue_month_to_update
@@ -305,7 +305,7 @@ class ProformaController < ApplicationController
     if success_array.all?
       flash[:notice] = 'Proforma guardada'
     else
-      flash[:alert] = 'Un error ha ocurrido. Por favor revise la proforma e intente nuevamente.'
+      flash[:alert] = 'Un error ha ocurrido. Por favor revise la proformanext e intente nuevamente.'
     end
 
     # noinspection RailsParamDefResolve
@@ -323,14 +323,14 @@ class ProformaController < ApplicationController
   end
 
 
-  def block_proforma
+  def block_proformanext
     find_project
     string = 'block_'+ params[:project_id]+''
     if /\d{4}-\d{2}-\d{2}/.match(params[string])
-      old_settings = Setting.send 'plugin_proforma'
+      old_settings = Setting.send 'plugin_proformanext'
       # safe?
       old_settings[string] = params[string]
-      Setting.send 'plugin_proforma=', old_settings
+      Setting.send 'plugin_proformanext=', old_settings
     end
     # noinspection RailsParamDefResolve
     redirect_to :action => 'index', :project_id => params[:project_id]
@@ -347,7 +347,7 @@ class ProformaController < ApplicationController
     all.each do |a|
       ids.push a[:user_id]
     end
-    @proformas = User.where(id: ids)
+    @proformanexts = User.where(id: ids)
     @time_entries = TimeEntry.where(user_id: ids, :tmonth => month_to_show.month, :tyear => month_to_show.year, :project_id => params[:project_id])
     this_month_days = params[:days].to_i
     arr_day_names = %w(L M M J V S D)
@@ -370,8 +370,8 @@ class ProformaController < ApplicationController
      <p>Mes:#{TimeEntry.month_name(month_to_show.month) + '/' + month_to_show.year.to_s}</p>",
                     true, 1)
 
-    @pdf.image('/opt/bitnami/apps/redmine/htdocs/public/plugin_assets/proforma/images/folder-it-logo-header-blog.png')
-    # @pdf.image('/opt/bitnami/apps/redmine/htdocs/plugins/proforma/assets/images/folder-it-logo-header-blog.png')
+    @pdf.image('/opt/bitnami/apps/redmine/htdocs/public/plugin_assets/proformanext/images/folder-it-logo-header-blog.png')
+    # @pdf.image('/opt/bitnami/apps/redmine/htdocs/plugins/proformanext/assets/images/folder-it-logo-header-blog.png')
 
     @pdf.set_fill_color(120, 61, 100)
     first_column_width = 35
@@ -414,12 +414,12 @@ class ProformaController < ApplicationController
     # User/hours row
     @project = project
     time_entry_activity = TimeEntryActivity.where(name: 'Timeoff')[0]
-    var0 = Setting.plugin_proforma['feriados']
+    var0 = Setting.plugin_proformanext['feriados']
     holidays = var0 ? var0.split(',') : []
     @pdf.set_fill_color(128, 128, 128)
     comments = []
 
-    @proformas.each do |p|
+    @proformanexts.each do |p|
       total=0
       workable=0
       @pdf.write_html_cell(first_column_width, 0, first_column_margin, row_y, "<p>#{p.user}</p>", 1, 0, 0)
@@ -483,7 +483,7 @@ class ProformaController < ApplicationController
     @project = Project.find(params[:project_id])
     current = User.current
     current_member = ProjectAssignedUser.where(:user_id => current.id).first
-    @proformas = [current_member]
+    @proformanexts = [current_member]
 
     search_users_no_members
   end
