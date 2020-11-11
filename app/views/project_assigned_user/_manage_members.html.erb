@@ -7,7 +7,7 @@
 <% end %>
 <!-- Select box users -->
 <div class="select-user">
-  <%= form_with do %>
+  <%=  form_tag() do %>
     <%= hidden_field_tag(:project_id, @project[:id]) %>
     <label class="label-users" for="users">Agregar nuevo miembro al proyecto:</label>
     <%= select_tag(:user_id, options_for_select(@users_map.sort)) %>
@@ -32,7 +32,7 @@
       </thead>
       <% for @empleado in @project_active_members %>
         <tr class="row-data">
-          <%= form_with(url: "proformanext/update_project_assigned_user", method: "put") do %>
+          <%= form_tag url_for(action: 'update_project_assigned_user'), method: 'put' do %>
             <%= hidden_field_tag(:project_id, @project[:id]) %>
             <%= hidden_field_tag(:user_id, @empleado.user.id) %>
             <input type="hidden" id="employeeId" name="employeeId" value="<%= @empleado.user.id %>">
